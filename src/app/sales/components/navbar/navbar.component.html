@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg fixed-top nav-shop bg-white">
+    <div class="container-fluid container">
+      <a class="navbar-brand h1 mt-1" [routerLinkActive]="'active'"   routerLink="/shop">Jewel Shop</a>
+      <a class="navbar-brand h1 mt-1"   routerLink="/shop">About mep</a>
+      <a class="navbar-brand h3 mt-1" routerLink="/shop">Contact</a>
+      <a class="navbar-brand h3 mt-1" routerLink="/shop">Blog</a>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+        <div class="d-flex">
+
+          <a routerLink="/shop/checkout" class="me-2">
+            <button type="button" class="btn btn-primary position-relative" >
+              Cart
+              <!-- <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" *ngIf="{quantity: quantity$ | async } as dataCart">
+                <ng-container *ngIf="dataCart.quantity !== 0">{{dataCart.quantity}}</ng-container>
+              </span> -->
+            </button>
+          </a>
+          
+          <a [routerLink]="" class="btn btn-success" type="submit">
+            <em class="fas fa-user">&nbsp;ERICH</em>
+          </a>
+          &nbsp;
+          &nbsp;
+        
+          <a class="btn btn-secondary"  type="submit">
+            Logout
+           </a>
+        </div>
+        
+      </div>
+    </div>
+</nav>

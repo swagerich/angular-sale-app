@@ -1,0 +1,92 @@
+<div
+  class="p-4 text-center hero-container-products shadow-lg mb-5 bg-none container-fluid d-flex justify-content-center align-items-center flex-column"
+>
+  <h1 class="fw-bold p-2 text-white">Jewels Shop Erich</h1>
+  <p class="lead fw-normal fst-italic pt-2 pb-1 text-white">
+    Three clicks away from having your Apple products.
+  </p>
+  <h3 class="pt-0 pb-4 text-white">Add, sign and search.</h3>
+  <a class="btn btn-primary p-2 text-white" href="/shop#products"
+    >Make an order</a
+  >
+</div>
+
+<!-- Categorias -->
+<div class="container text-center pt-2 pb-1" id="elige">
+  <h2>Elige tu categoria</h2>
+</div>
+
+<div
+  class="container-fluid container overflow-hidden text-center d-flex justify-content-center aling-items-center pb-5 mt-2 mb-2 filter"
+>
+  <div *ngFor="let category of categories" (click)="loadProductsByCategoryName(category.name)"
+    class="col-md-2 col-sm-5 rounded d-flex flex-column justify-content-center align-items-center"
+    id="btn-airpods"
+  >
+    <img
+      src="../../../../../assets/data/img/cards/card-airpods.png"
+      class="p-3"
+    />
+    <span class="fw-bold filter-link" >{{ category.name }}</span>
+  </div>
+  
+</div>
+
+
+<!-- mostrar card  By paginacion -->
+<div
+  class="overflow-hidden m-3 text-center rounded shadow-lg p-4 gap-4 flex-wrap align-items-center m-auto items-container container"
+  id="shop-items-container"
+>
+  <app-component-card *ngFor="let product of products" [product]="product">
+  </app-component-card>
+</div>
+<div
+  class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
+>
+  <mat-paginator
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[10, 25, 50]"
+    [length]="totalElements"
+    (page)="onPageChange($event)"
+  ></mat-paginator>
+</div>
+
+<!-- TOTAL PAGOS  -->
+<!-- <ng-container>
+  <div
+    class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
+  >
+    <h2>Your total buy is $</h2>
+    <p class="fw-lighter mt-2 text-center">
+      Go cart to pay for get the products and enjoy the life!
+    </p>
+    <button class="btn btn-primary fs-2 end-buy" routerLink="/shop/checkout">
+      End buy
+    </button>
+  </div>
+
+  <div
+    class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
+  >
+    <h2>Add items in your cart!</h2>
+    <p class="fw-lighter mt-2 text-center">
+      Add products on the cart and go to pay for get the products!
+    </p>
+  </div>
+</ng-container> -->
+
+<!-- Mapa -->
+
+<div class="bg-dark text-white container-fluid find-us">
+  <h2 class="pt-2 pb-2 text-center">Find us here!</h2>
+  <p class="fw-lighter pb-2 text-center">
+    The bests Apple products sellers in the city!
+  </p>
+  <div class="overflow-hidden m-3 rounded shadow-lg find-us-map">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3406.201436119038!2d-64.21718838489022!3d-31.381008801681563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x943298e16c8d3053%3A0x7fc78b1f816ef745!2sOneClick%20C%C3%B3rdoba%20Shopping!5e0!3m2!1sen!2sar!4v1664995580878!5m2!1sen!2sar"
+    ></iframe>
+  </div>
+</div>
