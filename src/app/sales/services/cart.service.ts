@@ -19,10 +19,14 @@ export class CartService {
   }
 
   public fetchCartByUserId(userId:number): Observable<CartDto> {
-    return this.http.get<CartDto>(`${this.endPoint}/${userId}`);
+    return this.http.get<CartDto>(`${this.endPoint}/cart/${userId}`);
   }
   
-  public removeProductFromCart(cartId:number,productId:number): void {
-      this.http.delete(`${this.endPoint}/delete${cartId}/${productId}`);
+  public removeProductFromCart(cartId:number,productId:number): Observable<void> {
+     return  this.http.delete<void>(`${this.endPoint}/cart/delete/${cartId}/${productId}`);
+  }
+
+  public updateProductQuantity(cartId:number,quantity:number): Observable<any> {
+    return this.http.put<any>(`${this.endPoint}/cart/update/${cartId}/${quantity}`,{});
   }
 }

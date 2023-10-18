@@ -1,0 +1,82 @@
+.detail-main-container {
+    min-height: 70vh;
+  }
+  .detail-container {
+    margin: 20px auto;
+    margin-top: 100px;
+    padding: 20px;
+  }
+  .img-detail {
+    width: 100%;
+    padding: 0 20px 30px 10px;
+  }
+  .img-card-detail {
+    width: 20%;
+  }
+  .detail-text {
+    width: 70%;
+  }
+  .buttons-details {
+    width: 100% !important;
+  }
+  
+  @media (max-width: 500px) {
+    .detail-container {
+      flex-direction: column;
+    }
+    .img-card-detail {
+      width: 100%;
+    }
+    .detail-main-container {
+      margin: 20px;
+      min-height: 50vh;
+    }
+    .detail-text {
+      padding-bottom: 30px;
+    }
+  }
+  
+
+  .field {
+    margin-left: 8px;
+    width: 80%;
+  }
+
+ 
+
+
+  /* CAR */
+  body{margin-top:20px;
+background-color: #f1f3f7;
+}
+
+.card {
+    margin-bottom: 24px;
+    -webkit-box-shadow: 0 2px 3px #e4e8f0;
+    box-shadow: 0 2px 3px #e4e8f0;
+}
+.card {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #eff0f2;
+    border-radius: 1rem;
+}
+
+.avatar-lg {
+    height: 5rem;
+    width: 5rem
+}
+
+
+ 
+

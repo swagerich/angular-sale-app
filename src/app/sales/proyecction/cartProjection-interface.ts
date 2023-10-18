@@ -1,4 +1,4 @@
-import { ProductProjection } from './ProductProjection-interface';
+import { ProductProjection } from './productProjection-interface';
 
 export interface CartProjection {
   carId    : number;

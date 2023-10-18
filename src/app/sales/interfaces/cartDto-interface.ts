@@ -1,10 +1,9 @@
-import { ProductProjection } from "../proyecction/ProductProjection-interface";
+import { ProductProjection } from "../proyecction/productProjection-interface";
 
 export interface CartDto {
   cartItem : CartItemDto[];
-  totalCost: number;
+  totalCosto: number;
 }
-
 export interface CartItemDto {
   id      : number;
   quantity: number;

@@ -1,0 +1,168 @@
+<form [formGroup]="myFormDetails">
+  <div
+    class="detail-main-container d-flex flex-column justify-content-center align-items-center"
+  >
+    <div
+      class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
+    >
+      <div class="container">
+        <h2 style="margin-left: 8px">Shipping address</h2>
+        <div class="row">
+          <div class="col mt-2">
+            <mat-form-field class="field" appearance="outline">
+              <mat-label>Full Name</mat-label>
+              <input matInput formControlName="fullName" required />
+              <mat-error></mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="field" appearance="outline">
+              <mat-label>Full Address</mat-label>
+              <input matInput formControlName="fullAddress" required />
+              <mat-error></mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="field" appearance="outline">
+              <mat-label>Contact Number</mat-label>
+              <input matInput formControlName="contactNumber" required />
+              <mat-error></mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="field" appearance="outline">
+              <mat-label>Alternative Number</mat-label>
+              <input
+                matInput
+                formControlName="alternativeContactNumber"
+                required
+              />
+              <mat-error></mat-error>
+            </mat-form-field>
+
+            <div class="row">
+              <div class="col-sm">
+                <mat-form-field
+                  style="width: 40%; margin-left: 8px"
+                  appearance="outline"
+                >
+                  <mat-label>City</mat-label>
+                  <input matInput formControlName="city" required />
+                  <mat-error></mat-error>
+                </mat-form-field>
+
+                <mat-form-field style="width: 40%" appearance="outline">
+                  <mat-label>Code Postal</mat-label>
+                  <input matInput formControlName="postal" required />
+                  <mat-error></mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card checkout-order-summary">
+              <div class="card-body">
+                <div class="p-3 bg-light mb-3">
+                  <h5 class="font-size-16 mb-0">
+                    Order Summary <span class="float-end ms-2">#MN0124</span>
+                  </h5>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-centered mb-0 table-nowrap">
+                    <thead>
+                      <tr>
+                        <th
+                          class="border-top-0"
+                          style="width: 110px"
+                          scope="col"
+                        >
+                          Product
+                        </th>
+                        <th class="border-top-0" scope="col">Product Desc</th>
+                        <th class="border-top-0" scope="col">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- NG FOR AQUI -->
+                      <tr *ngFor="let cart of cartsItems">
+                        <th scope="row">
+                          <img
+                            src="../../../../../assets/data/img/apple-q2-2020-report-01.webp"
+                            alt="product-img"
+                            title="product-img"
+                            class="avatar-lg rounded"
+                          />
+                        </th>
+                        <td>
+                          <h5 class="font-size-16 text-truncate">
+                            <a href="#" class="text-dark">{{
+                              cart.product.name
+                            }}</a>
+                          </h5>
+                          <p class="text-muted mb-0">
+                            <i class="bx bxs-star text-warning"></i>
+                            <i class="bx bxs-star text-warning"></i>
+                            <i class="bx bxs-star text-warning"></i>
+                            <i class="bx bxs-star text-warning"></i>
+                            <i class="bx bxs-star-half text-warning"></i>
+                          </p>
+                          <p class="text-muted mb-0 mt-1">
+                            $ {{ cart.product.price }} x {{ cart.quantity }}
+                          </p>
+                        </td>
+                        <td>$ {{ cart.product.price * cart.quantity }}</td>
+                      </tr>
+
+                      <tr>
+                        <td colspan="2">
+                          <h5 class="font-size-14 m-0">Sub Total :</h5>
+                        </td>
+                        <td>$ {{ totalCosto }}</td>
+                      </tr>
+                      <!-- <tr>
+                          <td colspan="2">
+                            <h5 class="font-size-14 m-0">Discount :</h5>
+                          </td>
+                          <td>- $ 78</td>
+                        </tr> -->
+
+                      <tr>
+                        <td colspan="2">
+                          <h5 class="font-size-14 m-0">Shipping Charge :</h5>
+                        </td>
+                        <td>$ 25</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">
+                          <h5 class="font-size-14 m-0">Estimated Tax :</h5>
+                        </td>
+                        <td>$ 18.20</td>
+                      </tr>
+
+                      <tr class="bg-light">
+                        <td colspan="2">
+                          <h5 class="font-size-14 m-0">Total:</h5>
+                        </td>
+                        <td>$ {{ totalCosto }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <mat-card-actions >
+          <button [routerLink]="'/shop/checkout'" mat-raised-button color="warn" type="button">Cancel</button>
+        </mat-card-actions>
+
+        <!-- AQUI REDIRECCINAMOS A UNA API DE PAGOS -->
+
+        <mat-card-actions class="text-center" style="margin-left: 10px;">
+          <button mat-raised-button color="primary" type="button">
+            Proceed to Payment
+          </button>
+        </mat-card-actions>
+      </div>
+    </div>
+  </div>
+</form>

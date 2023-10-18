@@ -1,0 +1,103 @@
+<form [formGroup]="myForm">
+  <div
+    class="detail-main-container d-flex flex-column justify-content-center align-items-center"
+  >
+    <div
+      class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
+    >
+      <table mat-table [dataSource]="transactions">
+        <ng-container matColumnDef="item">
+          <mat-header-cell *matHeaderCellDef>Products</mat-header-cell>
+      
+          <mat-cell  *matCellDef="let transaction">
+          
+            <div class="mb-2 mt-2">
+              <img
+              src="../../../../../assets/data/img/apple-q2-2020-report-01.webp"
+              class="avatar-lg rounded"
+            />
+            </div>
+            <h3 style="margin-left: 5px;" class="text-muted ml-3 mb-0 mt-1">
+                 {{ transaction.product.name | titlecase }}
+              
+            </h3>
+ 
+          </mat-cell>
+       
+          <mat-footer-cell style="font-weight: bold" *matFooterCellDef
+            >Sub Total</mat-footer-cell
+          >
+        </ng-container>
+
+        <ng-container matColumnDef="cost">
+          <mat-header-cell *matHeaderCellDef>Cost</mat-header-cell>
+          <mat-cell *matCellDef="let transaction">{{
+            transaction.product.price | currency
+          }}</mat-cell>
+          <mat-footer-cell
+            style="font-weight: bold"
+            mat-footer-cell
+            *matFooterCellDef
+          >
+            {{ valorTotal | currency }}
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <mat-header-cell *matHeaderCellDef>Quantity</mat-header-cell>
+          <mat-cell *matCellDef="let transaction">
+            <div class="col-sm-4">
+              <input
+                type="number"
+                class="form-control"
+                min="1"
+                [value]="transaction.quantity"
+                readonly
+              />
+            </div>
+            <!--             
+              POR AHORA UTILIZARE ESTA FORMA DE OBTENER EL VALOR DEL INPUT COMOI ESTA ARRIBA
+              [formControlName]="'inputValue_' + transaction.id" -->
+          </mat-cell>
+          <mat-footer-cell
+            style="font-weight: bold"
+            mat-footer-cell
+            *matFooterCellDef
+          >
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+          <mat-cell *matCellDef="let transaction">
+            <button
+              (click)="
+                deleteProductToCart(transaction.id, transaction.product.id)
+              "
+              mat-icon-button
+              color="warn"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-cell>
+          <mat-footer-cell mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+        </ng-container>
+
+       
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row
+          *matRowDef="let transaction; columns: displayedColumns"
+        ></mat-row>
+        <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      </table>
+    </div>
+
+    <div
+      class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
+    >
+      <mat-card-actions>
+        <button routerLink="/shop/order-detail" mat-raised-button color="primary">Checkout</button>
+      </mat-card-actions>
+    </div>
+  </div>
+</form>
