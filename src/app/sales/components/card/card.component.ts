@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ProductDto } from '../../interfaces/productDto-interface';
 
 @Component({
-  selector: 'app-component-card',
+  selector: 'component-card',
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.css']
 })

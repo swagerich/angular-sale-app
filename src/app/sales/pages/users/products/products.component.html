@@ -15,7 +15,6 @@
 <div class="container text-center pt-2 pb-1" id="elige">
   <h2>Elige tu categoria</h2>
 </div>
-
 <div
   class="container-fluid container overflow-hidden text-center d-flex justify-content-center aling-items-center pb-5 mt-2 mb-2 filter"
 >
@@ -31,15 +30,13 @@
   </div>
   
 </div>
-
-
 <!-- mostrar card  By paginacion -->
 <div
   class="overflow-hidden m-3 text-center rounded shadow-lg p-4 gap-4 flex-wrap align-items-center m-auto items-container container"
   id="shop-items-container"
 >
-  <app-component-card *ngFor="let product of products" [product]="product">
-  </app-component-card>
+  <component-card *ngFor="let product of products" [product]="product">
+  </component-card>
 </div>
 <div
   class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
@@ -53,29 +50,6 @@
   ></mat-paginator>
 </div>
 
-<!-- TOTAL PAGOS  -->
-<!-- <ng-container>
-  <div
-    class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
-  >
-    <h2>Your total buy is $</h2>
-    <p class="fw-lighter mt-2 text-center">
-      Go cart to pay for get the products and enjoy the life!
-    </p>
-    <button class="btn btn-primary fs-2 end-buy" routerLink="/shop/checkout">
-      End buy
-    </button>
-  </div>
-
-  <div
-    class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
-  >
-    <h2>Add items in your cart!</h2>
-    <p class="fw-lighter mt-2 text-center">
-      Add products on the cart and go to pay for get the products!
-    </p>
-  </div>
-</ng-container> -->
 
 <!-- Mapa -->
 

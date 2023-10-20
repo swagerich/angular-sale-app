@@ -1,1 +1,82 @@
-<p>add-product works!</p>
+<form [formGroup]="myFormProduct" (ngSubmit)="saveProduct()">
+  <div
+    class="detail-main-container d-flex flex-column justify-content-center align-items-center"
+  >
+    <div
+      class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
+    >
+      <div class="container">
+        <h2 style="margin-left: 8px">Add Product</h2>
+        <hr />
+        <div class="row">
+          <div class="col mt-2">
+            <mat-form-field class="field" appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" />
+              <mat-error></mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="field" appearance="outline">
+              <mat-label>Description</mat-label>
+              <textarea  matInput formControlName="description"></textarea>
+              <mat-error></mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="field" appearance="outline">
+              <mat-label>Price</mat-label>
+              <input matInput formControlName="price" />
+              <mat-error></mat-error>
+            </mat-form-field>
+
+            <section>
+              <mat-slide-toggle class="field" formControlName="active"
+                  >
+                isActive
+              </mat-slide-toggle>
+            </section>
+              <mat-error></mat-error>
+      
+            <div class="row">
+              <div class="col-sm">
+                <mat-form-field class="field" appearance="outline">
+                  <mat-label>Alternative Number</mat-label>
+                  <mat-select
+                    formControlName="category"
+                    name="category"
+                  >
+                    <mat-option
+                      *ngFor="let category of categories"
+                      [value]="category"
+                    >
+                      {{ category.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error></mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="col mt-2">
+              <figcaption *ngIf="!imageUrl" class="blockquote-footer">
+               select a photo <cite title="Source Title">for the product</cite>
+              </figcaption>
+       
+            <img *ngIf="imageUrl" [src]="imageUrl"  class="img-fluid rounded mx-auto d-block img" alt="...">
+            <div class="mt-3">
+                <input class="form-control"  type="file" (change)="onFileSelected($event)">
+              </div>
+          </div>
+        </div>
+        <mat-card-actions>
+          <button routerLink="" mat-raised-button color="warn">Back</button>
+        </mat-card-actions>
+
+        <mat-card-actions style="margin-left: 5%">
+          <button type="submit" mat-raised-button color="primary">
+            Add Product
+          </button>
+        </mat-card-actions>
+      </div>
+    </div>
+  </div>
+</form>

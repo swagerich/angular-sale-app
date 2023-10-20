@@ -4,7 +4,9 @@ export interface ProductDto {
   id?: number;
   name: string;
   description: string;
-  isStock: boolean;
+  active: boolean;
   price: number;
+  namePhoto?: string;
+  filePath?:string;
   category: CategoryDto;
 }
