@@ -9,6 +9,9 @@ import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { AdminLayoutComponent } from './admin/admin-layout/admin-layout.component';
 import { AddProductComponent } from './admin/products/add-product/add-product.component';
 import { UpdateProductComponent } from './admin/products/update-product/update-product.component';
+import { ListProductsComponent } from './admin/products/list-products/list-products.component';
+import { OrderDetailsComponent } from './admin/order-details/order-details.component';
+import { CategoriesComponent } from './admin/category/categories/categories.component';
 
 const routes: Routes = [
   {
@@ -45,13 +48,25 @@ const routes: Routes = [
         component: DashboardComponent,
       },
       {
+        path: 'products',
+        component: ListProductsComponent,
+      },
+      {
         path: 'product-add',
         component: AddProductComponent,
       },
       {
-        path: 'product-edit/:pId',
+        path: 'edit/:pId',
         component: UpdateProductComponent,
       },
+      {
+        path:'order-detail',
+        component: OrderDetailsComponent
+      },
+      {
+        path:'categories',
+        component: CategoriesComponent
+      }
     ],
   },
 ];

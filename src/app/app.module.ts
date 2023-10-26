@@ -9,12 +9,14 @@ import { FooterComponent } from './sales/components/footer/footer.component';
 import { NavbarComponent } from './sales/components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
+import { ModalTemplateComponent } from './sales/components/modal-template/modal-template.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+    ModalTemplateComponent
   ],
   imports: [
     BrowserModule,

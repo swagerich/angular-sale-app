@@ -1,0 +1,33 @@
+<form [formGroup]="myForm" (ngSubmit)="saveCategory()">
+    <h2 mat-dialog-title>{{data ? 'Update Category':'New Category'}}</h2>
+    <br />
+    <mat-dialog-content class="mat-typography">
+      <mat-form-field class="field" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error *ngIf="isValidateField('name')">
+            is required
+          </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="field" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+        <mat-error *ngIf="isValidateField('description')">
+            is required
+          </mat-error>
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="center">
+      <button mat-raised-button color="warn" [mat-dialog-close]="false">
+        Cancel
+      </button>
+      <button
+        mat-raised-button
+        type="submit"
+        color="primary"
+      >
+        {{data ? 'update':'Save'}}
+      </button>
+    </mat-dialog-actions>
+  </form>

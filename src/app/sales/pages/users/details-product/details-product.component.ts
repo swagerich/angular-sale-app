@@ -1,6 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { switchMap, Subscription } from 'rxjs';
 import { ProductService } from 'src/app/sales/services/product.service';
 import { ProductDto } from '../../../interfaces/productDto-interface';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -12,11 +12,13 @@ import { CartService } from 'src/app/sales/services/cart.service';
   templateUrl: './details-product.component.html',
   styleUrls: ['./details-product.component.css'],
 })
-export class DetailsProductComponent implements OnInit {
+export class DetailsProductComponent implements OnInit,OnDestroy {
 
   private productService = inject(ProductService);
 
   private activateRoute = inject(ActivatedRoute);
+
+  public subscription$ = new Subscription();
 
   private cartService = inject(CartService);
 
@@ -61,5 +63,9 @@ export class DetailsProductComponent implements OnInit {
     }
   }
 
-
+  ngOnDestroy(): void {
+    if(this.subscription$){
+      this.subscription$.unsubscribe();
+    }
+  }
 }

@@ -16,7 +16,9 @@ import { AddProductComponent } from './admin/products/add-product/add-product.co
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { AdminLayoutComponent } from './admin/admin-layout/admin-layout.component';
 import { UpdateProductComponent } from './admin/products/update-product/update-product.component';
-
+import { OrderDetailsComponent } from './admin/order-details/order-details.component';
+import { CreateUpdateComponent } from './admin/category/create-update/create-update.component';
+import { CategoriesComponent } from './admin/category/categories/categories.component';
 
 
 @NgModule({
@@ -32,7 +34,11 @@ import { UpdateProductComponent } from './admin/products/update-product/update-p
     DashboardComponent,
     AddProductComponent,
     AdminLayoutComponent,
-    UpdateProductComponent
+    UpdateProductComponent,
+    OrderDetailsComponent,
+    CategoriesComponent,
+    CreateUpdateComponent
+
   ],
   imports: [
     CommonModule,

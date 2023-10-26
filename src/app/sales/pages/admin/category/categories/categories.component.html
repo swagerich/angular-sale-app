@@ -1,0 +1,43 @@
+<div
+  class="detail-main-container d-flex flex-column justify-content-center align-items-center"
+>
+  <div
+    class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
+  >
+    <div class="row centered">
+      <blockquote class="blockquote mb-0">
+        <h1>Categories.</h1>
+        <footer class="blockquote-footer">
+          <cite title="Source Title"
+            >Edita o crear nuevas categorías.Recuerdas que las 4 primeras
+            categorías son las que se ven en la portada de tu tienda</cite
+          >
+        </footer>
+      </blockquote>
+
+      <div class="mt-2">
+        <button (click)="openDialogForm()"  class="btn btn-warning">
+          add category
+        </button>
+      </div>
+  
+      <div class="card" *ngFor="let category of categories" >
+        <div class="card-body" >
+          <div class="card-title">{{ category.name }}</div>
+          <div class="card-text">{{ category.description }}</div>   
+          <button mat-icon-button color="warn">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+          <button (click)="openDialogEdit(category)" mat-icon-button>
+            <mat-icon mat-button>edit</mat-icon>
+          </button>
+
+        </div>
+
+      </div>
+  
+   
+    </div>
+  </div>
+</div>

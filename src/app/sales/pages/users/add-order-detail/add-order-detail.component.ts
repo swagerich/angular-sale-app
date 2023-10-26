@@ -1,14 +1,16 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CartService } from 'src/app/sales/services/cart.service';
 import { CartItemDto } from '../../../interfaces/cartDto-interface';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-add-order-detail',
   templateUrl: './add-order-detail.component.html',
   styleUrls: ['./add-order-detail.component.css']
 })
-export class AddOrderDetailComponent implements OnInit {
+export class AddOrderDetailComponent implements OnInit,OnDestroy {
+  
  
   private cartService = inject(CartService);
 
@@ -17,6 +19,8 @@ export class AddOrderDetailComponent implements OnInit {
   public cartsItems : CartItemDto [] = [];
 
   public totalCosto : number = 0;
+
+  public subscription$ = new Subscription();
 
   public myFormDetails : FormGroup = this.fb.group({
     fullName:[''],
@@ -44,7 +48,7 @@ export class AddOrderDetailComponent implements OnInit {
 
 
   loadCartByUserId(userId: number): void {
-    this.cartService.fetchCartByUserId(userId).subscribe({
+   this.subscription$ = this.cartService.fetchCartByUserId(userId).subscribe({
       next:(cart) =>{
         this.cartsItems = cart.cartItem
         this.totalCosto = cart.totalCosto;
@@ -52,5 +56,9 @@ export class AddOrderDetailComponent implements OnInit {
     })
     
   }
-
+  ngOnDestroy(): void {
+    if(this.subscription$){
+      this.subscription$.unsubscribe();
+    }
+  }
 }

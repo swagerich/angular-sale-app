@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { environment } from 'src/app/environments/environment';
 
 import { ProductDto } from '../interfaces/productDto-interface';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { ProductDtoOfPage } from '../interfaces/productDtoOfPage-interface';
 import { ApiResponse } from '../interfaces/ApiResponse-interface';
 
@@ -15,7 +15,7 @@ export class ProductService {
 
   private http = inject(HttpClient);
 
-  public fetchAllPageProduct(
+  public fetchAllPageProductActive(
     page: number,
     size: number
   ): Observable<ProductDtoOfPage> {
@@ -46,38 +46,97 @@ export class ProductService {
       );
   }
 
-  public fetchProductById(productId: number): Observable<ProductDto> {
-    return this.http.get<ApiResponse>(`${this.endPoint}/product/${productId}`)
-    .pipe(map((response) => response.data as ProductDto));
+  public fetchAllPageProduct(
+    page: number,
+    size: number
+  ): Observable<ProductDtoOfPage> {
+    return this.http
+      .get<ApiResponse>(
+        `${this.endPoint}/product/page-all?page=${page}&size=${size}`
+      )
+      .pipe(
+        map((response) => {
+          return response.data as ProductDtoOfPage;
+        })
+      );
   }
 
-  public updateProductById(
+  public deleteProduct(productId: number): Observable<void> {
+    return this.http
+      .delete<ApiResponse>(`${this.endPoint}/product/${productId}`)
+      .pipe(
+        map((response) => {
+          of(response);
+        })
+      );
+  }
+
+  public fetchPhotoById(
+    productId: number,
+    fileName: string
+  ): Observable<ArrayBuffer> {
+    return this.http.get<ArrayBuffer>(
+      `${this.endPoint}/product/getphoto/${productId}/${fileName}`,
+      {
+        responseType: 'arraybuffer' as 'json',
+      }
+    );
+  }
+
+  public fetchProductById(productId: number): Observable<ProductDto> {
+    return this.http
+      .get<ApiResponse>(`${this.endPoint}/product/${productId}`)
+      .pipe(map((response) => response.data as ProductDto));
+  }
+
+  public updateProductPhotoById(
     product: ProductDto,
     productId: number,
     file: File
   ): Observable<ProductDto> {
-    return this.http.put<ApiResponse>(
-      `${this.endPoint}/product/foto/${productId}`,
-      this._createFormData(product, file)
-    ).pipe(
-      map(response =>{
-        return response.data as ProductDto;
-      })
-    );
+    return this.http
+      .put<ApiResponse>(
+        `${this.endPoint}/product/foto/${productId}`,
+        this._createFormData(product, file)
+      )
+      .pipe(
+        map((response) => {
+          return response.data as ProductDto;
+        })
+      );
   }
 
-  public fetchAllPageProductByCategoryName(
+  public updateProductById(
+    product: ProductDto,
+    productId: number
+  ): Observable<ProductDto> {
+    return this.http
+      .put<ApiResponse>(
+        `${this.endPoint}/product/${productId}`,
+      product
+      )
+      .pipe(
+        map((response) => {
+          return response.data as ProductDto;
+        })
+      );
+  }
+  
+
+  public fetchAllPageProductActiveByCategoryName(
     categoryName: string,
     page: number,
     size: number
   ): Observable<ProductDtoOfPage> {
-    return this.http.get<ApiResponse>(
-      `${this.endPoint}/product/page-name/${categoryName}?page=${page}&size=${size}`
-    ).pipe(
-      map((response) =>{
-        return response.data as ProductDtoOfPage;
-      })
-    );
+    return this.http
+      .get<ApiResponse>(
+        `${this.endPoint}/product/page-name/${categoryName}?page=${page}&size=${size}`
+      )
+      .pipe(
+        map((response) => {
+          return response.data as ProductDtoOfPage;
+        })
+      );
   }
 
   //falta HACER EL productAllPage

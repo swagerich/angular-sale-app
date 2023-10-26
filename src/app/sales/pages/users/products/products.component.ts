@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ProductService } from 'src/app/sales/services/product.service';
 import { ProductDto } from '../../../interfaces/productDto-interface';
 import { Subscription, delay } from 'rxjs';
@@ -17,7 +17,7 @@ export class ProductsComponent implements OnInit,OnDestroy {
 
   private categoryService = inject(CategoryService);
 
-  public subscription = new Subscription();
+  public subscription$ = new Subscription();
 
   public categories: CategoryDto[] = [];
   public products: ProductDto[] = [];
@@ -31,8 +31,8 @@ export class ProductsComponent implements OnInit,OnDestroy {
   }
 
   loadProducts(): void {
-  this.subscription =  this.productService
-      .fetchAllPageProduct(this.pageIndex, this.pageSize)
+  this.subscription$ =  this.productService
+      .fetchAllPageProductActive(this.pageIndex, this.pageSize)
       .pipe(delay(1))
       .subscribe({
         next: (valor) => {
@@ -49,7 +49,7 @@ export class ProductsComponent implements OnInit,OnDestroy {
   }
 
    loadCategories(): void {
-  this.subscription =   this.categoryService.fetchAllCategory().subscribe({
+  this.subscription$ =   this.categoryService.fetchAllCategory().subscribe({
       next: (data) => {
         this.categories = data;
       },
@@ -57,8 +57,8 @@ export class ProductsComponent implements OnInit,OnDestroy {
   }
 
   loadProductsByCategoryName(categoryName: string): void {
-   this.subscription = this.productService
-      .fetchAllPageProductByCategoryName(
+   this.subscription$ = this.productService
+      .fetchAllPageProductActiveByCategoryName(
         categoryName,
         this.pageIndex,
         this.pageSize
@@ -74,8 +74,8 @@ export class ProductsComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if(this.subscription){
-      this.subscription.unsubscribe();
+    if(this.subscription$){
+      this.subscription$.unsubscribe();
     }
   }
 

@@ -10,7 +10,7 @@ export interface OrderDetailProjection {
   productName             : string;
 }
 export enum OrderStatus {
-  DELIVERY,
-  IN_PROCESS,
+  ORDER_DELIVERED,
+  // IN_PROCESS,
   ORDER_PLACED,
 }

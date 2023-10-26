@@ -1,10 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CartService } from 'src/app/sales/services/cart.service';
-import { delay } from 'rxjs';
+import { delay, Subscription } from 'rxjs';
 import { CartItemDto } from 'src/app/sales/interfaces/cartDto-interface';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
@@ -14,14 +13,17 @@ import {
   templateUrl: './details-cart.component.html',
   styleUrls: ['./details-cart.component.css'],
 })
-export class DetailsCartComponent implements OnInit {
+export class DetailsCartComponent implements OnInit,OnDestroy {
+ 
   private cartService = inject(CartService);
 
-  displayedColumns: string[] = ['item', 'cost', 'quantity', 'actions'];
+  public subscription$ = new Subscription();
 
-  transactions: CartItemDto[] = [];
+  public displayedColumns: string[] = ['item', 'cost', 'quantity', 'actions'];
 
-  valorTotal: number = 0;
+  public transactions: CartItemDto[] = [];
+
+  public valorTotal: number = 0;
 
   private fb = inject(FormBuilder);
 
@@ -34,7 +36,7 @@ export class DetailsCartComponent implements OnInit {
   }
 
   loadCartByUserId(userId: number): void {
-    this.cartService
+   this.subscription$ = this.cartService
       .fetchCartByUserId(userId)
       .pipe(delay(1000))
       .subscribe({
@@ -64,5 +66,11 @@ export class DetailsCartComponent implements OnInit {
         this.loadCartByUserId(1);
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription$){
+      this.subscription$.unsubscribe();
+    }
   }
 }

@@ -13,33 +13,38 @@
             <mat-form-field class="field" appearance="outline">
               <mat-label>Name</mat-label>
               <input matInput formControlName="name" />
-              <mat-error></mat-error>
+              <mat-error *ngIf="isValidateField('name')">
+                is required
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field class="field" appearance="outline">
               <mat-label>Description</mat-label>
               <textarea  matInput formControlName="description"></textarea>
-              <mat-error></mat-error>
+              <mat-error *ngIf="isValidateField('description')">
+                is required
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field class="field" appearance="outline">
               <mat-label>Price</mat-label>
               <input matInput formControlName="price" />
-              <mat-error></mat-error>
+              <mat-error *ngIf="isValidateField('price')">
+                is required
+              </mat-error>
             </mat-form-field>
 
             <section>
-              <mat-slide-toggle class="field" formControlName="active"
+              <mat-slide-toggle class="field mb15" formControlName="active"
                   >
-                isActive
+                {{myFormProduct.get('active')?.value ? 'Active' : 'Inactive'}}
               </mat-slide-toggle>
             </section>
-              <mat-error></mat-error>
       
             <div class="row">
               <div class="col-sm">
                 <mat-form-field class="field" appearance="outline">
-                  <mat-label>Alternative Number</mat-label>
+                  <mat-label>Categories</mat-label>
                   <mat-select
                     formControlName="category"
                     name="category"
@@ -51,24 +56,26 @@
                       {{ category.name }}
                     </mat-option>
                   </mat-select>
-                  <mat-error></mat-error>
+                  <mat-error *ngIf="isValidateField('category')">
+                    is required
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
           </div>
           <div class="col mt-2">
-              <figcaption *ngIf="!imageUrl" class="blockquote-footer">
-               select a photo <cite title="Source Title">for the product</cite>
-              </figcaption>
-       
             <img *ngIf="imageUrl" [src]="imageUrl"  class="img-fluid rounded mx-auto d-block img" alt="...">
+            <img  *ngIf="!imageUrl" src="assets/data/img/default.png"  class="img-fluid rounded mx-auto d-block img" alt="...">
             <div class="mt-3">
-                <input class="form-control"  type="file" (change)="onFileSelected($event)">
+                <input class="form-control" formControlName="file" type="file" (change)="onFileSelected($event)">
               </div>
+              <mat-error *ngIf="isValidateField('file')">
+                select an image please
+              </mat-error>
           </div>
         </div>
         <mat-card-actions>
-          <button routerLink="" mat-raised-button color="warn">Back</button>
+          <button routerLink="/admin/products" mat-raised-button color="warn">Back</button>
         </mat-card-actions>
 
         <mat-card-actions style="margin-left: 5%">

@@ -1,19 +1,27 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, inject, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoryDto } from 'src/app/sales/interfaces/categoryDto-interface';
 import { ProductDto } from 'src/app/sales/interfaces/productDto-interface';
 import { CategoryService } from 'src/app/sales/services/category.service';
 import { ProductService } from 'src/app/sales/services/product.service';
+import { ValidatorService } from 'src/app/utils/service/validator.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-add-product',
   templateUrl: './add-product.component.html',
   styleUrls: ['./add-product.component.css'],
 })
-export class AddProductComponent implements OnInit {
+export class AddProductComponent implements OnInit,OnDestroy {
+  
   private productService = inject(ProductService);
 
   private categoryService = inject(CategoryService);
+
+  private validatorService = inject(ValidatorService);
+
+  public subscription$ = new Subscription();
 
   private fb = inject(FormBuilder);
 
@@ -21,18 +29,17 @@ export class AddProductComponent implements OnInit {
 
   public myFormProduct: FormGroup = this.fb.group({
     id: 0,
-    name: ['', []],
-    description: ['', []],
+    name: ['', [Validators.required]],
+    description: ['', [Validators.required]],
     active: [false, []],
-    price: [0, []],
-    category: [''],
+    price: ['', [Validators.required]],
+    file: ['', [Validators.required]],
+    category: ['',[Validators.required]],
   });
 
   public selectedFile: File | undefined;
 
   public imageUrl: string | undefined;
-
-  public isImageSelected: boolean = false;
 
   ngOnInit(): void {
     this.loadCategories();
@@ -49,13 +56,11 @@ export class AddProductComponent implements OnInit {
       if (allowedFormats.includes(file.type)) {
         this.imageUrl = URL.createObjectURL(file);
         this.selectedFile = file;
-        this.isImageSelected = true;
       } else {
         // Swal.fire('Opps!','File not allowed','warning');
         console.error('No permitido');
         this.imageUrl = undefined;
         this.selectedFile = undefined;
-        this.isImageSelected = false;
       }
     }
   }
@@ -66,19 +71,32 @@ export class AddProductComponent implements OnInit {
       return;
     }
     this.productService
-      .saveProductToPhoto(this.currentProduct, this.selectedFile)
+      .saveProductToPhoto(this.currentProduct, this.selectedFile!)
       .subscribe({
         next: (a) => {
-          console.log(a);
+          console.log(a)
         },
+        error:(e:HttpErrorResponse) =>{
+            this.validatorService.showSnackBarForError(e);          }
       });
   }
 
   loadCategories(): void {
-    this.categoryService.fetchAllCategory().subscribe({
+   this.subscription$ = this.categoryService.fetchAllCategory().subscribe({
       next: (categories) => {
         this.categories = categories;
       },
     });
+  }
+
+  public isValidateField(field:string): boolean | null{
+    return this.validatorService.isValidField(this.myFormProduct,field);
+  }
+
+
+  ngOnDestroy(): void {
+    if(this.subscription$){
+      this.subscription$.unsubscribe();
+    }
   }
 }

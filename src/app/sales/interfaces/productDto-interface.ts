@@ -6,7 +6,8 @@ export interface ProductDto {
   description: string;
   active: boolean;
   price: number;
-  namePhoto?: string;
-  filePath?:string;
+  namePhoto: string;
+  filePath:string;
   category: CategoryDto;
+  productImagen?: string;
 }

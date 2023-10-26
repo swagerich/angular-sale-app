@@ -22,11 +22,17 @@ export class CategoryService {
   }
 
   public saveCategory(category: CategoryDto): Observable<CategoryDto> {
-    return this.http.post<ApiResponse>(`${this.endPoint}/category`, category)
-    .pipe(
-      map((response) =>{
-        return response.data as CategoryDto;
-      })
-    );
+    return this.http
+      .post<ApiResponse>(`${this.endPoint}/category`, category)
+      .pipe(map((response) => response.data as CategoryDto));
+  }
+
+  public updateCategory(
+    category: CategoryDto,
+    categoryId: number
+  ): Observable<CategoryDto> {
+    return this.http
+      .put<ApiResponse>(`${this.endPoint}/category/${categoryId}`, category)
+      .pipe(map((response) => response.data as CategoryDto));
   }
 }

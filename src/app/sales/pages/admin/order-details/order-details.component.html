@@ -1,0 +1,67 @@
+<div
+  class="detail-main-container d-flex flex-column justify-content-center align-items-center"
+>
+  <div
+    class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
+  >
+    <div class="container">
+      <mat-table [dataSource]="dataPaginacion">
+        <ng-container matColumnDef="id">
+          <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+          <mat-cell *matCellDef="let order">
+            {{ order.id }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="productName">
+          <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>
+          <mat-cell *matCellDef="let order">{{ order.productName }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="userName">
+          <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
+          <mat-cell *matCellDef="let order">
+            {{ order.userName }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="fullAddress">
+          <mat-header-cell *matHeaderCellDef>Address</mat-header-cell>
+          <mat-cell *matCellDef="let order">
+            {{ order.fullAddress }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="contactNumber">
+          <mat-header-cell *matHeaderCellDef>Contact</mat-header-cell>
+          <mat-cell *matCellDef="let order">{{ order.contactNumber }}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="orderStatus">
+          <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+          <mat-cell *matCellDef="let order">
+            <div class="col-auto">
+              <select  (change)="changeStatus(order.id,$event)" class="form-select">
+                <option [value]="order.orderStatus" selected>{{ order.orderStatus }}</option>
+                <ng-container *ngFor="let item of orderStatus">
+                  <option [value]="item" *ngIf="item !== order.orderStatus" >{{ item }}</option>
+                </ng-container>
+              </select>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let order; columns: displayedColumns"></mat-row>
+      </mat-table>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </div>
+  </div>
+</div>

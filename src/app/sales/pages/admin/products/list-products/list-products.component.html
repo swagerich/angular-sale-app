@@ -1,0 +1,94 @@
+
+  <div
+    class="detail-main-container d-flex flex-column justify-content-center align-items-center"
+  >
+    <div
+      class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
+    >
+      <div class="container">
+        <mat-table [dataSource]="dataPaginacion">
+          <ng-container matColumnDef="product">
+            <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>
+            <mat-cell *matCellDef="let client">
+              <div class="mb-2 mt-2">
+                <img
+                  *ngIf="client.productImagen"
+                  [src]="client.productImagen"
+                  class="avatar-lg rounded"
+                />
+            
+                <img
+                  *ngIf="!client.productImagen"
+                  src="../../../../../../assets/data/img/default.png"
+                  class="avatar-lg rounded"
+                />
+              </div>
+              <h3 style="margin-left: 5px" class="text-muted ml-3 mb-0 mt-1">
+                {{ client.name | titlecase }}
+              </h3>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
+            <mat-cell *matCellDef="let client">{{ client.price }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="active">
+            <mat-header-cell *matHeaderCellDef>Active</mat-header-cell>
+            <mat-cell *matCellDef="let client">
+              <h2>
+                <span
+                  class="badge rounded-pill"
+                  [ngClass]="{
+                    'bg-success': client.active,
+                    'bg-warning': !client.active
+                  }"
+                >
+                  {{ client.active ? "Active" : "Inactive" }}
+                </span>
+              </h2>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions" >
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+
+            <mat-cell *matCellDef="let client" >
+                <!-- <mat-slide-toggle 
+                (change)="changeUserState(client.id)"
+                formControlName="active"
+              ></mat-slide-toggle> -->
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteProduct(client.id)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="primary"
+                [routerLink]="'/admin/edit/' + client.id"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let client; columns: displayedColumns"></mat-row>
+        </mat-table>
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 20]"
+          [length]="totalElements"
+          [pageSize]="pageSize"
+          [pageIndex]="pageIndex"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+        >
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
+
