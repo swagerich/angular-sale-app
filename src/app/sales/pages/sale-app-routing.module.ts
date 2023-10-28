@@ -12,6 +12,8 @@ import { UpdateProductComponent } from './admin/products/update-product/update-p
 import { ListProductsComponent } from './admin/products/list-products/list-products.component';
 import { OrderDetailsComponent } from './admin/order-details/order-details.component';
 import { CategoriesComponent } from './admin/category/categories/categories.component';
+import { userGuard } from '../auth/guards/user.guard';
+import { adminGuard } from '../auth/guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -21,9 +23,14 @@ const routes: Routes = [
 
   //user
   {
-    path: 'shop',
+    path: 'user',
     component: UserLayoutComponent,
+    canActivate: [userGuard],
     children: [
+      {
+        path: 'shop',
+        component: ProductsComponent,
+      },
       {
         path: 'checkout',
         component: DetailsCartComponent,
@@ -42,6 +49,7 @@ const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
+    canActivate: [adminGuard],
     children: [
       {
         path: 'dashboard',

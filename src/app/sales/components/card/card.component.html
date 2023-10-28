@@ -1,7 +1,13 @@
 <div class="card p-2 rounded border-0 shadow-sm">
   <div class="img-card-container">
     <img
-      src="../../../../assets/data/img/itemsShop/ipad1.jpeg"
+      *ngIf="product.productImagen"
+      [src]="product.productImagen"
+      class="card-img-top"
+    />
+    <img 
+      *ngIf="!product.productImagen"
+      src="../../../../assets/data/img/default.png"
       class="card-img-top"
     />
   </div>

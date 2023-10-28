@@ -1,15 +1,20 @@
 <nav class="navbar navbar-expand-lg fixed-top nav-shop bg-white">
     <div class="container-fluid container">
-      <a class="navbar-brand h1 mt-1" [routerLinkActive]="'active'"   routerLink="/shop">Jewel Shop</a>
+      <a class="navbar-brand h1 mt-1" [routerLinkActive]="'active'" routerLink="/shop">Jewel Shop</a>
       <a class="navbar-brand h1 mt-1"   routerLink="/shop">About mep</a>
       <a class="navbar-brand h3 mt-1" routerLink="/shop">Contact</a>
       <a class="navbar-brand h3 mt-1" routerLink="/shop">Blog</a>
-      <a class="navbar-brand h3 mt-1" routerLink="/admin/order-detail">Customer Order</a>  <!-- admin-->
+      <div *ngIf="!isLogged()">
+        <a class="navbar-brand h3 mt-1"  routerLink="/admin/categories">Categories</a>   <!-- admin-->
+        <a class="navbar-brand h3 mt-1"  routerLink="/admin/products">Products</a>   <!-- admin-->
+        <a class="navbar-brand h3 mt-1"  routerLink="/admin/order-detail">Customer Order</a>  <!-- admin-->
+      </div>
+
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
         <div class="d-flex">
 
-          <a routerLink="/shop/checkout" class="me-2">
+          <a *ngIf="isLogged()" routerLink="/shop/checkout" class="me-2">
             <button type="button" class="btn btn-primary position-relative" >
               See cart
               <!-- <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" *ngIf="{quantity: quantity$ | async } as dataCart">
@@ -24,7 +29,7 @@
           &nbsp;
           &nbsp;
         
-          <a class="btn btn-secondary"  type="submit">
+          <a class="btn btn-secondary" (click)="logout()"  type="button">
             Logout
            </a>
         </div>

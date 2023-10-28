@@ -19,10 +19,14 @@ import { UpdateProductComponent } from './admin/products/update-product/update-p
 import { OrderDetailsComponent } from './admin/order-details/order-details.component';
 import { CreateUpdateComponent } from './admin/category/create-update/create-update.component';
 import { CategoriesComponent } from './admin/category/categories/categories.component';
+import { NavbarComponent } from '../components/navbar/navbar.component';
+import { FooterComponent } from '../components/footer/footer.component';
 
 
 @NgModule({
   declarations: [
+    NavbarComponent,
+    FooterComponent,
     UserLayoutComponent,
     ProductsComponent,
     DetailsProductComponent,

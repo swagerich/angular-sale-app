@@ -2,7 +2,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
-import { of, Subscription, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  EMPTY,
+  of,
+  Subscription,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 import { CategoryDto } from 'src/app/sales/interfaces/categoryDto-interface';
 import { ProductDto } from 'src/app/sales/interfaces/productDto-interface';
 import { CategoryService } from 'src/app/sales/services/category.service';
@@ -41,7 +49,6 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
 
   public productId: number = 0;
 
-
   public myFormProduct: FormGroup = this.fb.group({
     id: 0,
     name: ['', [Validators.required]],
@@ -51,7 +58,6 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
     file: ['', [Validators.required]],
     category: ['', [Validators.required]],
   });
-
 
   ngOnInit(): void {
     this.loadCategories();
@@ -65,19 +71,31 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
           this.productService.fetchProductById(params['pId'])
         ),
         tap((product) => {
-          const category = this.categories.find((c) => c.id === product.category.id);
-          if (category) {
-            product.category = category;
+          if (product.category) {
+            const category = this.categories.find(
+              (c) => c.id === product.category.id
+            );
+            if (category) {
+              product.category = category;
+            }
+            this.selectedFileName = product.namePhoto!;
+            this.productId = product.id!;
+            this.myFormProduct.reset(product);
+          } else {
+            this.selectedFileName = product.namePhoto!;
+            this.productId = product.id!;
+            this.myFormProduct.reset(product);
           }
-          this.selectedFileName = product.namePhoto!;
-          this.productId = product.id!;
-          this.myFormProduct.reset(product);
         }),
         switchMap((p: ProductDto) => {
           if (p.namePhoto === null) {
             return of();
           }
           return this.productService.fetchPhotoById(p.id!, p.namePhoto!);
+        }),
+        catchError((e: HttpErrorResponse) => {
+          this.validatorService.showSnackBarForError(e);
+          return EMPTY;
         })
       )
       .subscribe({
@@ -85,9 +103,6 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
           const blob = new Blob([buffer], { type: 'image/jpg' || 'image/png' });
           const imageUrl = URL.createObjectURL(blob);
           this.imageUrl = imageUrl;
-        },
-        error: (e: HttpErrorResponse) => {
-          this.validatorService.showSnackBarForError(e);
         },
       });
   }
@@ -126,7 +141,7 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
         this.myFormProduct.markAllAsTouched();
         return;
       }
-   this.subscription$ =  this.productService
+      this.subscription$ = this.productService
         .updateProductPhotoById(product, this.productId, this.selectedFile!)
         .subscribe({
           next: () => {
@@ -141,6 +156,11 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
           },
         });
     } else {
+      this.myFormProduct.get('file')?.clearValidators();
+      if (this.myFormProduct.get('category')?.invalid) {
+        this.myFormProduct.get('category')?.markAsTouched();
+        return;
+      }
       this.productService.updateProductById(product, this.productId).subscribe({
         next: () => {
           Swal.fire('Updated!', 'The data has been updated.', 'success');

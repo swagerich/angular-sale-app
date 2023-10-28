@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -7,4 +8,13 @@ import { Component } from '@angular/core';
 })
 export class NavbarComponent {
 
+  private authService = inject(AuthService);
+
+  logout(): void {
+    this.authService.logout();
+  }
+
+  isLogged(): boolean {
+   return this.authService.getUserRole() == "ROLE_USER" ? true : false;
+  }
 }

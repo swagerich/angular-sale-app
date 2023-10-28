@@ -61,14 +61,9 @@ export class ProductService {
       );
   }
 
-  public deleteProduct(productId: number): Observable<void> {
+  public deleteProduct(productId: number): Observable<ApiResponse> {
     return this.http
-      .delete<ApiResponse>(`${this.endPoint}/product/${productId}`)
-      .pipe(
-        map((response) => {
-          of(response);
-        })
-      );
+      .delete<ApiResponse>(`${this.endPoint}/product/${productId}`);
   }
 
   public fetchPhotoById(

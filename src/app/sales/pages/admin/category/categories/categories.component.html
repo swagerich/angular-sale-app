@@ -25,7 +25,7 @@
         <div class="card-body" >
           <div class="card-title">{{ category.name }}</div>
           <div class="card-text">{{ category.description }}</div>   
-          <button mat-icon-button color="warn">
+          <button (click)="deleteCategory(category.id!)" mat-icon-button color="warn">
             <mat-icon>delete</mat-icon>
           </button>
 

@@ -6,6 +6,7 @@
       class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
     >
       <div class="container">
+        <button mat-raised-button routerLink="/admin/product-add" color="primary">Add Product</button>
         <mat-table [dataSource]="dataPaginacion">
           <ng-container matColumnDef="product">
             <mat-header-cell *matHeaderCellDef>Product</mat-header-cell>

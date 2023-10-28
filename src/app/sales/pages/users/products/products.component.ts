@@ -36,6 +36,7 @@ export class ProductsComponent implements OnInit,OnDestroy {
       .pipe(delay(1))
       .subscribe({
         next: (valor) => {
+          console.log(valor)
           this.totalElements = valor.pages.totalElements;
           this.products = valor.products;
         },

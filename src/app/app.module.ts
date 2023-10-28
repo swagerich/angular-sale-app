@@ -5,17 +5,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { HttpClientModule } from '@angular/common/http';
-import { FooterComponent } from './sales/components/footer/footer.component';
-import { NavbarComponent } from './sales/components/navbar/navbar.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from './material/material.module';
-import { ModalTemplateComponent } from './sales/components/modal-template/modal-template.component';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ModalTemplateComponent } from './sales/components/modal-template/modal-template.component';
+import { LoginComponent } from './sales/auth/login/login.component';
+import { SignupComponent } from './sales/auth/signup/signup.component';
+import { authInterceptorProviders } from './sales/auth/auth.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
-    FooterComponent,
     ModalTemplateComponent
   ],
   imports: [
@@ -23,9 +21,11 @@ import { ModalTemplateComponent } from './sales/components/modal-template/modal-
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MaterialModule
+    //==standalone==
+    LoginComponent,
+    SignupComponent
   ],
-  providers: [],
+  providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
