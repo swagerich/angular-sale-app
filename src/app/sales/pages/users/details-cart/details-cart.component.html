@@ -5,25 +5,33 @@
     <div
       class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
     >
-      <table mat-table [dataSource]="transactions">
+      <table
+        *ngIf="transactions.length > 0; else show"
+        mat-table
+        [dataSource]="transactions"
+      >
         <ng-container matColumnDef="item">
           <mat-header-cell *matHeaderCellDef>Products</mat-header-cell>
-      
-          <mat-cell  *matCellDef="let transaction">
-          
+
+          <mat-cell *matCellDef="let transaction">
             <div class="mb-2 mt-2">
               <img
-              src="../../../../../assets/data/img/apple-q2-2020-report-01.webp"
-              class="avatar-lg rounded"
-            />
+                *ngIf="transaction.product.productImagen"
+                [src]="transaction.product.productImagen"
+                class="avatar-lg rounded"
+              />
+
+              <img
+                *ngIf="!transaction.product.productImagen"
+                src="assets/data/img/default.png"
+                class="avatar-lg rounded"
+              />
             </div>
-            <h3 style="margin-left: 5px;" class="text-muted ml-3 mb-0 mt-1">
-                 {{ transaction.product.name | titlecase }}
-              
+            <h3 style="margin-left: 5px" class="text-muted ml-3 mb-0 mt-1">
+              {{ transaction.product.name | titlecase }}
             </h3>
- 
           </mat-cell>
-       
+
           <mat-footer-cell style="font-weight: bold" *matFooterCellDef
             >Sub Total</mat-footer-cell
           >
@@ -83,7 +91,6 @@
           <mat-footer-cell mat-footer-cell *matFooterCellDef> </mat-footer-cell>
         </ng-container>
 
-       
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row
           *matRowDef="let transaction; columns: displayedColumns"
@@ -91,13 +98,31 @@
         <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
       </table>
     </div>
-
     <div
+      *ngIf="transactions.length > 0"
       class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
     >
       <mat-card-actions>
-        <button routerLink="/shop/order-detail" mat-raised-button color="primary">Checkout</button>
+        <button
+          style="margin-right: 10px"
+          routerLink="/user/shop"
+          mat-raised-button
+          color="warn"
+        >
+          Back
+        </button>
+
+        <button routerLink="/user/add-order" mat-raised-button color="primary">
+          Checkout
+        </button>
       </mat-card-actions>
     </div>
+    <ng-template #show>
+      <div
+        class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
+      >
+        <p>Aun no has agregado productos al carrito</p>
+      </div>
+    </ng-template>
   </div>
 </form>

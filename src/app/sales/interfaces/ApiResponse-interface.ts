@@ -1,5 +1,6 @@
 import { CartDto } from './cartDto-interface';
 import { CategoryDto } from './categoryDto-interface';
+import { OrderDetailDto } from './orderDetailDto-interface';
 import { OrderDetailPageOfUserDto } from './orderDetailOfPage-interface';
 import { OrderStatusDto } from './orderStatusDto-interface';
 import { ProductDto } from './productDto-interface';
@@ -26,5 +27,6 @@ export interface ApiResponse {
     | ProductDtoOfPage
     | QuantityProductsDto
     | OrderDetailPageOfUserDto
-    | OrderStatusDto; //orderStatus
+    | OrderStatusDto //orderStatus
+    | OrderDetailDto
 }

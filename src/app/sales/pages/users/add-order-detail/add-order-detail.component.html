@@ -1,4 +1,4 @@
-<form [formGroup]="myFormDetails">
+<form [formGroup]="myFormDetails" (ngSubmit)="saveOrder()">
   <div
     class="detail-main-container d-flex flex-column justify-content-center align-items-center"
   >
@@ -12,19 +12,19 @@
             <mat-form-field class="field" appearance="outline">
               <mat-label>Full Name</mat-label>
               <input matInput formControlName="fullName" required />
-              <mat-error></mat-error>
+              <mat-error *ngIf="validateOnField('fullName')"> is required</mat-error>
             </mat-form-field>
 
             <mat-form-field class="field" appearance="outline">
               <mat-label>Full Address</mat-label>
               <input matInput formControlName="fullAddress" required />
-              <mat-error></mat-error>
+              <mat-error *ngIf="validateOnField('fullAddress')"> is required</mat-error>
             </mat-form-field>
 
             <mat-form-field class="field" appearance="outline">
               <mat-label>Contact Number</mat-label>
               <input matInput formControlName="contactNumber" required />
-              <mat-error></mat-error>
+              <mat-error *ngIf="validateOnField('contactNumber')"> is required</mat-error>
             </mat-form-field>
 
             <mat-form-field class="field" appearance="outline">
@@ -34,24 +34,25 @@
                 formControlName="alternativeContactNumber"
                 required
               />
-              <mat-error></mat-error>
+              <mat-error *ngIf="validateOnField('alternativeContactNumber')"> is required</mat-error>
             </mat-form-field>
 
             <div class="row">
-              <div class="col-sm">
+              <div class="col-sm-5">
                 <mat-form-field
-                  style="width: 40%; margin-left: 8px"
+                class="field" 
                   appearance="outline"
                 >
                   <mat-label>City</mat-label>
                   <input matInput formControlName="city" required />
-                  <mat-error></mat-error>
+                  <mat-error *ngIf="validateOnField('city')"> is required</mat-error>
                 </mat-form-field>
-
-                <mat-form-field style="width: 40%" appearance="outline">
+              </div>
+              <div class="col-sm-5">
+                <mat-form-field  class="field"  appearance="outline">
                   <mat-label>Code Postal</mat-label>
                   <input matInput formControlName="postal" required />
-                  <mat-error></mat-error>
+                  <mat-error *ngIf="validateOnField('postal')"> is required</mat-error>
                 </mat-form-field>
               </div>
             </div>
@@ -84,8 +85,14 @@
                       <!-- NG FOR AQUI -->
                       <tr *ngFor="let cart of cartsItems">
                         <th scope="row">
-                          <img
-                            src="../../../../../assets/data/img/apple-q2-2020-report-01.webp"
+                          <img *ngIf="cart.product.productImagen"
+                            [src]="cart.product.productImagen"
+                            alt="product-img"
+                            title="product-img"
+                            class="avatar-lg rounded"
+                          />
+                          <img *ngIf="!cart.product.productImagen"
+                            src="assets/data/img/default.png"
                             alt="product-img"
                             title="product-img"
                             class="avatar-lg rounded"
@@ -93,7 +100,7 @@
                         </th>
                         <td>
                           <h5 class="font-size-16 text-truncate">
-                            <a href="#" class="text-dark">{{
+                            <a class="text-dark">{{
                               cart.product.name
                             }}</a>
                           </h5>
@@ -123,7 +130,7 @@
                           </td>
                           <td>- $ 78</td>
                         </tr> -->
-
+<!-- 
                       <tr>
                         <td colspan="2">
                           <h5 class="font-size-14 m-0">Shipping Charge :</h5>
@@ -135,7 +142,7 @@
                           <h5 class="font-size-14 m-0">Estimated Tax :</h5>
                         </td>
                         <td>$ 18.20</td>
-                      </tr>
+                      </tr> -->
 
                       <tr class="bg-light">
                         <td colspan="2">
@@ -151,14 +158,21 @@
           </div>
         </div>
 
-        <mat-card-actions >
-          <button [routerLink]="'/shop/checkout'" mat-raised-button color="warn" type="button">Cancel</button>
+        <mat-card-actions>
+          <button
+            [routerLink]="'/user/checkout'"
+            mat-raised-button
+            color="warn"
+            type="button"
+          >
+            Cancel
+          </button>
         </mat-card-actions>
 
         <!-- AQUI REDIRECCINAMOS A UNA API DE PAGOS -->
 
-        <mat-card-actions class="text-center" style="margin-left: 8%;">
-          <button mat-raised-button color="primary" type="button">
+        <mat-card-actions class="text-center" style="margin-left: 8%">
+          <button [disabled]="myFormDetails.invalid" mat-raised-button color="primary" type="submit">
             Proceed to Payment
           </button>
         </mat-card-actions>

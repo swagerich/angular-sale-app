@@ -4,6 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   EMPTY,
+  Observable,
   Subscription,
   catchError,
   filter,
@@ -11,6 +12,8 @@ import {
   map,
   mergeMap,
   of,
+  switchMap,
+  toArray,
 } from 'rxjs';
 import { ProductDto } from 'src/app/sales/interfaces/productDto-interface';
 import { ProductService } from 'src/app/sales/services/product.service';
@@ -24,7 +27,6 @@ import Swal from 'sweetalert2';
   styleUrls: ['./list-products.component.css'],
 })
 export class ListProductsComponent implements OnInit, OnDestroy {
-
   public productService = inject(ProductService);
 
   public sharedDataService = inject(SharedDataServiceService);
@@ -49,41 +51,28 @@ export class ListProductsComponent implements OnInit, OnDestroy {
     this.subscription$ = this.productService
       .fetchAllPageProduct(this.pageIndex, this.pageSize)
       .pipe(
-        mergeMap((response) => {
+        switchMap((response) => {
           this.products = response.products;
           this.totalPages = response.pages.totalPages;
           this.totalElements = response.pages.totalElements;
           return from(response.products).pipe(
             mergeMap((p) => {
-              if(p.namePhoto === null && p.filePath === null){
+              if (!p.namePhoto && !p.filePath) {
                 return of(null);
               }
-              return this.productService
-                .fetchPhotoById(p.id!, p.namePhoto!)
-                .pipe(
-                  map((response) => {
-                    const blob = new Blob([response], {
-                      type: 'image/jpg' || 'image/png',
-                    });
-                    const imageUrl = URL.createObjectURL(blob);
-                    p.productImagen = imageUrl;
-                    return p;
-                  })
-                );
-            })
+              return this.loadProductPhoto(p);
+            }),
+            filter((p) => p !== null),
+            toArray()
           );
-        }),
-        catchError((error:HttpErrorResponse) =>{
-          this.validatorService.showSnackBarForError(error);
-          return EMPTY;
-        }) 
+        })
       )
       .subscribe({
         next: () => {
           this.dataPaginacion = new MatTableDataSource<ProductDto>(
             this.products
           );
-        }
+        },
       });
   }
 
@@ -113,11 +102,11 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   //               });
   //           }
   //         });
-        
+
   //       }
   //     });
   //   }
-  
+
   onPageChange(event: PageEvent) {
     this.getPage(event.pageIndex, event.pageSize);
   }
@@ -130,35 +119,22 @@ export class ListProductsComponent implements OnInit, OnDestroy {
           this.products = response.products;
           return from(response.products).pipe(
             mergeMap((p) => {
-              if(p.namePhoto === null && p.filePath === null){
+              if (!p.namePhoto && !p.filePath) {
                 return of(null);
               }
-              return this.productService
-                .fetchPhotoById(p.id!, p.namePhoto)
-                .pipe(
-                  map((resp) => {
-                    const blob = new Blob([resp], {
-                      type: 'image/jpg' || 'image/png',
-                    });
-                    const imageUrl = URL.createObjectURL(blob);
-                    p.productImagen = imageUrl;
-                    return p;
-                  })
-                );
-            })
+              return this.loadProductPhoto(p);
+            }),
+            filter((p) => p !== null),
+            toArray()
           );
-        }),
-        catchError((error:HttpErrorResponse) =>{
-          this.validatorService.showSnackBarForError(error);
-          return EMPTY;
-        }) 
+        })
       )
       .subscribe({
         next: () => {
           this.dataPaginacion = new MatTableDataSource<ProductDto>(
             this.products
           );
-        }
+        },
       });
   }
 
@@ -184,6 +160,25 @@ export class ListProductsComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  private loadProductPhoto(product: ProductDto): Observable<ProductDto> {
+    return this.productService
+      .fetchPhotoById(product.id!, product.namePhoto!)
+      .pipe(
+        map((response) => {
+          const blob = new Blob([response], {
+            type: 'image/jpg' || 'image/png',
+          });
+          const imageUrl = URL.createObjectURL(blob);
+          product.productImagen = imageUrl;
+          return product;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.validatorService.showSnackBarForError(error);
+          return EMPTY;
+        })
+      );
   }
 
   ngOnDestroy(): void {

@@ -1,21 +1,32 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CartService } from 'src/app/sales/services/cart.service';
-import { delay, Subscription } from 'rxjs';
-import { CartItemDto } from 'src/app/sales/interfaces/cartDto-interface';
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+  from,
+  map,
+  mergeMap,
+  of,
+  Subscription,
+  switchMap,
+} from 'rxjs';
+import { CartItemDto } from 'src/app/sales/interfaces/cartDto-interface';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/sales/services/auth.service';
+import { ValidatorService } from 'src/app/utils/service/validator.service';
+import { ProductService } from 'src/app/sales/services/product.service';
 
 @Component({
   selector: 'app-details-cart',
   templateUrl: './details-cart.component.html',
   styleUrls: ['./details-cart.component.css'],
 })
-export class DetailsCartComponent implements OnInit,OnDestroy {
- 
+export class DetailsCartComponent implements OnInit, OnDestroy {
   private cartService = inject(CartService);
+
+  private productService = inject(ProductService);
+
+  private authService = inject(AuthService);
+
+  private validatorService = inject(ValidatorService);
 
   public subscription$ = new Subscription();
 
@@ -25,6 +36,10 @@ export class DetailsCartComponent implements OnInit,OnDestroy {
 
   public valorTotal: number = 0;
 
+  public userId: number = 0;
+
+  public existsImage: boolean = false;
+
   private fb = inject(FormBuilder);
 
   public myForm: FormGroup = this.fb.group({
@@ -32,18 +47,38 @@ export class DetailsCartComponent implements OnInit,OnDestroy {
   });
 
   ngOnInit(): void {
-    this.loadCartByUserId(1);
+    this.userId = this.authService.getUser().userId;
+    this.loadCartByUserId(this.userId);
   }
 
   loadCartByUserId(userId: number): void {
-   this.subscription$ = this.cartService
+    this.subscription$ = this.cartService
       .fetchCartByUserId(userId)
-      .pipe(delay(1000))
+      .pipe(
+        switchMap((cart) => {
+          this.transactions = cart.cartItem;
+          this.valorTotal = cart.totalCosto;
+          return from(cart.cartItem).pipe(
+            mergeMap((cartItem) => {
+              if (!cartItem.product.namePhoto && !cartItem.product.filePath) {
+                return of(null);
+              }
+              return this.productService
+                .fetchPhotoById(cartItem.product.id, cartItem.product.namePhoto)
+                .pipe(
+                  map((photo) => {
+                    const blob = new Blob([photo], {
+                      type: 'image/jpeg' || 'image/png',
+                    });
+                    cartItem.product.productImagen = URL.createObjectURL(blob);
+                  })
+                );
+            })
+          );
+        })
+      )
       .subscribe({
         next: (valor) => {
-          this.transactions = valor.cartItem;
-          this.valorTotal = valor.totalCosto;
-
           //lo comento porque por ahora utilizare el input en el  html
           // valor.cartItem.forEach(cart => {
           //   const controlQuantity = 'inputValue_' + cart.id;
@@ -52,7 +87,7 @@ export class DetailsCartComponent implements OnInit,OnDestroy {
         },
       });
   }
-   
+
   // lo comento porque por ahora utilizare el input en el  html
   // updateQuantity(cartId: number, quantity: number) {
   //   this.cartService.updateProductQuantity(cartId, quantity).subscribe({
@@ -63,13 +98,16 @@ export class DetailsCartComponent implements OnInit,OnDestroy {
   deleteProductToCart(cartId: number, productId: number) {
     this.cartService.removeProductFromCart(cartId, productId).subscribe({
       next: () => {
-        this.loadCartByUserId(1);
+        this.loadCartByUserId(this.userId);
+        this.validatorService.validateSnackBar(
+          'Producto eliminado del carrito'
+        );
       },
     });
   }
 
   ngOnDestroy(): void {
-    if(this.subscription$){
+    if (this.subscription$) {
       this.subscription$.unsubscribe();
     }
   }

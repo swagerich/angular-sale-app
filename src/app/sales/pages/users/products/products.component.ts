@@ -1,21 +1,37 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ProductService } from 'src/app/sales/services/product.service';
 import { ProductDto } from '../../../interfaces/productDto-interface';
-import { Subscription, delay } from 'rxjs';
+import {
+  EMPTY,
+  Observable,
+  Subscription,
+  catchError,
+  delay,
+  filter,
+  from,
+  map,
+  mergeMap,
+  of,
+  switchMap,
+  toArray,
+} from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { CategoryService } from 'src/app/sales/services/category.service';
 import { CategoryDto } from 'src/app/sales/interfaces/categoryDto-interface';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ValidatorService } from 'src/app/utils/service/validator.service';
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
 })
-export class ProductsComponent implements OnInit,OnDestroy {
-
+export class ProductsComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
 
   private categoryService = inject(CategoryService);
+
+  private validatorService = inject(ValidatorService);
 
   public subscription$ = new Subscription();
 
@@ -31,15 +47,27 @@ export class ProductsComponent implements OnInit,OnDestroy {
   }
 
   loadProducts(): void {
-  this.subscription$ =  this.productService
+    this.subscription$ = this.productService
       .fetchAllPageProductActive(this.pageIndex, this.pageSize)
-      .pipe(delay(1))
+      .pipe(
+        delay(1),
+        switchMap((response) => {
+          this.totalElements = response.pages.totalElements;
+          this.products = response.products;
+          return from(response.products).pipe(
+            mergeMap((p) => {
+              if (!p.namePhoto && !p.filePath) {
+                return of(null);
+              }
+              return this.loadProductImage(p);
+            }),
+            filter((product) => product !== null),
+            toArray()
+          );
+        })
+      )
       .subscribe({
-        next: (valor) => {
-          console.log(valor)
-          this.totalElements = valor.pages.totalElements;
-          this.products = valor.products;
-        },
+        next: () => {},
       });
   }
 
@@ -49,35 +77,63 @@ export class ProductsComponent implements OnInit,OnDestroy {
     this.loadProducts();
   }
 
-   loadCategories(): void {
-  this.subscription$ =   this.categoryService.fetchAllCategory().subscribe({
-      next: (data) => {
-        this.categories = data;
+  loadCategories(): void {
+    this.subscription$ = this.categoryService.fetchAllCategory().subscribe({
+      next: (response) => {
+        this.categories = response;
       },
     });
   }
 
   loadProductsByCategoryName(categoryName: string): void {
-   this.subscription$ = this.productService
+    this.subscription$ = this.productService
       .fetchAllPageProductActiveByCategoryName(
         categoryName,
         this.pageIndex,
         this.pageSize
       )
       .pipe(
-        delay(1)
+        delay(1),
+        switchMap((response) => {
+          this.totalElements = response.pages.totalElements;
+          this.products = response.products;
+          this.pageIndex = 0;
+          return from(response.products).pipe(
+            mergeMap((p) => {
+              if (!p.namePhoto && !p.filePath) {
+                return of(null);
+              }
+              return this.loadProductImage(p);
+            }),
+            filter((product) => product !== null),
+            toArray()
+          );
+        })
       )
-      .subscribe((p) => {
-        this.totalElements = p.pages.totalElements;
-        this.products = p.products;
-        this.pageIndex = 0;
-      });
+      .subscribe(() => {});
+  }
+
+  private loadProductImage(product: ProductDto): Observable<ProductDto> {
+    return this.productService
+      .fetchPhotoById(product.id!, product.namePhoto)
+      .pipe(
+        map((response) => {
+          const blob = new Blob([response], {
+            type: 'image/jpeg' || 'image/png',
+          });
+          product.productImagen = URL.createObjectURL(blob);
+          return product;
+        }),
+        catchError((e: HttpErrorResponse) => {
+          this.validatorService.showSnackBarForError(e);
+          return EMPTY;
+        })
+      );
   }
 
   ngOnDestroy(): void {
-    if(this.subscription$){
+    if (this.subscription$) {
       this.subscription$.unsubscribe();
     }
   }
-
 }

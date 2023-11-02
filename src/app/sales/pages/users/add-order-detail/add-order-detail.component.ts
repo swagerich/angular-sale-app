@@ -1,63 +1,123 @@
 import { Component, OnInit, inject, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CartService } from 'src/app/sales/services/cart.service';
 import { CartItemDto } from '../../../interfaces/cartDto-interface';
-import { Subscription } from 'rxjs';
+import { Subscription, from, map, mergeMap, of, switchMap } from 'rxjs';
+import { AuthService } from 'src/app/sales/services/auth.service';
+import { ProductService } from 'src/app/sales/services/product.service';
+import { OrderDetailDto } from 'src/app/sales/interfaces/orderDetailDto-interface';
+import { ValidatorService } from 'src/app/utils/service/validator.service';
+import { OrderDetailService } from 'src/app/sales/services/order-detail.service';
 
 @Component({
   selector: 'app-add-order-detail',
   templateUrl: './add-order-detail.component.html',
-  styleUrls: ['./add-order-detail.component.css']
+  styleUrls: ['./add-order-detail.component.css'],
 })
-export class AddOrderDetailComponent implements OnInit,OnDestroy {
-  
- 
+export class AddOrderDetailComponent implements OnInit, OnDestroy {
+  private authService = inject(AuthService);
+
   private cartService = inject(CartService);
+
+  private productService = inject(ProductService);
+
+  private orderDetailService = inject(OrderDetailService);
+
+  private validatorService = inject(ValidatorService);
 
   private fb = inject(FormBuilder);
 
-  public cartsItems : CartItemDto [] = [];
+  public cartsItems: CartItemDto[] = [];
 
-  public totalCosto : number = 0;
+  public totalCosto: number = 0;
+
+  private userId: number = 0;
+
+  private selectedProductIds: number[] = [];
 
   public subscription$ = new Subscription();
 
-  public myFormDetails : FormGroup = this.fb.group({
-    fullName:[''],
-    fullAddress:[''],
-    contactNumber:[''],
-    alternativeContactNumber: [''],
-    city:[''],
-    postal:[''],
-    products:[{
-      productId:1,
-      userId:1
-    }]
+  public myFormDetails: FormGroup = this.fb.group({
+    fullName: ['', [Validators.required]],
+    fullAddress: ['', [Validators.required]],
+    contactNumber: ['', [Validators.required]],
+    alternativeContactNumber: ['', [Validators.required]],
+    city: ['', [Validators.required]],
+    postal: ['', [Validators.required]],
+    products: this.fb.array([
+      this.fb.group({
+        productId: [''],
+        userId: [''],
+      }),
+    ]),
   });
 
-
   ngOnInit(): void {
-    this.loadCartByUserId(1);
-  
+    this.userId = this.authService.getUser().userId;
+    this.loadCartByUserId();
   }
 
+  get currentOrderDetail(): OrderDetailDto {
+    return this.myFormDetails.value as OrderDetailDto;
+  }
 
-  saveOrder() : void {
+  saveOrder(): void {
+    const productsToAdd = this.selectedProductIds.map((productId) => {
+      return {
+        productId,
+        userId: this.userId,
+      };
+    });
+    this.myFormDetails.get('products')?.value.splice(0);
+    this.myFormDetails.get('products')?.value.push(...productsToAdd);
+
+   this.subscription$ = this.orderDetailService.saveOrderDetail(this.currentOrderDetail).subscribe({
+      next: (data: OrderDetailDto) => {
+        console.log(data);
+      },
+    });
+    ///AQUI FALTA CUANDO SE AGREGA EL PEDIDO QUE SE ELIMINE EL CARRITO
 
   }
 
-
-  loadCartByUserId(userId: number): void {
-   this.subscription$ = this.cartService.fetchCartByUserId(userId).subscribe({
-      next:(cart) =>{
-        this.cartsItems = cart.cartItem
-        this.totalCosto = cart.totalCosto;
-      }
-    })
-    
+  loadCartByUserId(): void {
+    this.subscription$ = this.cartService
+      .fetchCartByUserId(this.userId)
+      .pipe(
+        switchMap((cart) => {
+          this.cartsItems = cart.cartItem;
+          this.totalCosto = cart.totalCosto;
+          return from(cart.cartItem).pipe(
+            mergeMap((cartItem) => {
+              this.selectedProductIds.push(cartItem.product.id);
+              if (!cartItem.product.namePhoto && !cartItem.product.filePath) {
+                return of(null);
+              }
+              return this.productService
+                .fetchPhotoById(cartItem.product.id, cartItem.product.namePhoto)
+                .pipe(
+                  map((photo) => {
+                    const blob = new Blob([photo], {
+                      type: 'image/jpeg' || 'image/png',
+                    });
+                    cartItem.product.productImagen = URL.createObjectURL(blob);
+                  })
+                );
+            })
+          );
+        })
+      )
+      .subscribe({
+        next: () => {},
+      });
   }
+
+  validateOnField(field: string): boolean | null {
+    return this.validatorService.isValidField(this.myFormDetails, field);
+  }
+
   ngOnDestroy(): void {
-    if(this.subscription$){
+    if (this.subscription$) {
       this.subscription$.unsubscribe();
     }
   }

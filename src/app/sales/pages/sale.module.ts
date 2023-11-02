@@ -21,6 +21,7 @@ import { CreateUpdateComponent } from './admin/category/create-update/create-upd
 import { CategoriesComponent } from './admin/category/categories/categories.component';
 import { NavbarComponent } from '../components/navbar/navbar.component';
 import { FooterComponent } from '../components/footer/footer.component';
+import { OrderDetailsUserComponent } from './users/order-details/order-details-user.component';
 
 
 @NgModule({
@@ -34,6 +35,7 @@ import { FooterComponent } from '../components/footer/footer.component';
     DetailsCartComponent,
     AddOrderDetailComponent,
     ListProductsComponent,
+    OrderDetailsUserComponent,
     //admin
     DashboardComponent,
     AddProductComponent,

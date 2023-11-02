@@ -4,6 +4,8 @@ export interface OrderDetailDto {
   fullAddress: string;
   contactNumber: string;
   alternativeContactNumber: string;
+  city : string;
+  postal : string;
   products: OrderProductQuantityListDto[];
 }
 

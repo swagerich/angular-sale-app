@@ -3,4 +3,7 @@ export interface ProductProjection {
   name       : string;
   description: string;
   price      : number;
+  namePhoto  : string;
+  filePath   : string;
+  productImagen? : string;
 }

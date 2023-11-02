@@ -74,6 +74,7 @@ export class AddProductComponent implements OnInit,OnDestroy {
       .saveProductToPhoto(this.currentProduct, this.selectedFile!)
       .subscribe({
         next: (a) => {
+          
           console.log(a)
         },
         error:(e:HttpErrorResponse) =>{

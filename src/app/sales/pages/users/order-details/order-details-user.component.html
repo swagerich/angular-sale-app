@@ -1,0 +1,76 @@
+<div
+  class="detail-main-container d-flex flex-column justify-content-center align-items-center"
+>
+  <div
+    class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
+  >
+    <div *ngIf="orderDetails.length > 0;else notOrder" class="container">
+      <mat-table [dataSource]="dataPaginacion">
+        <ng-container matColumnDef="fullName">
+          <mat-header-cell *matHeaderCellDef>fullName</mat-header-cell>
+          <mat-cell *matCellDef="let order">
+            {{ order.fullName }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="fullAddress">
+          <mat-header-cell *matHeaderCellDef>Full Address</mat-header-cell>
+          <mat-cell *matCellDef="let order">{{ order.fullAddress }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="contactNumber">
+          <mat-header-cell *matHeaderCellDef>Contact Number</mat-header-cell>
+          <mat-cell *matCellDef="let order">
+            {{ order.contactNumber }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="alternativeContactNumber">
+          <mat-header-cell *matHeaderCellDef>Alternative N.</mat-header-cell>
+          <mat-cell *matCellDef="let order">
+            {{ order.alternativeContactNumber }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="orderStatus">
+          <mat-header-cell *matHeaderCellDef>Order Status</mat-header-cell>
+          <mat-cell *matCellDef="let order">{{ order.orderStatus }}</mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
+            <mat-cell *matCellDef="let order">{{ order.amount }}</mat-cell>
+          </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let order; columns: displayedColumns"></mat-row>
+      </mat-table>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </div>
+    
+  </div>
+  <div  *ngIf="orderDetails.length > 0"
+    class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
+  >
+    <mat-card-actions>
+      <button  [routerLink]="'/user/shop'" mat-raised-button color="warn">Back</button>
+    </mat-card-actions>
+    
+  </div>
+  <ng-template #notOrder>
+    <div 
+      class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
+    >
+    <p>Aun no tienes ninguna orden procesada!</p>
+    </div>
+  </ng-template>
+  
+</div>

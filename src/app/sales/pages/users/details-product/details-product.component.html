@@ -6,9 +6,12 @@
     class="container shadow-lg rounded detail-container d-flex justify-content-around align-items-center"
   >
     <div class="img-card-detail">
-      <!-- <img src="{{product?.img}}" class="img-detail pt-4"> -->
-      <img
-        src="../../../../../assets/data/img/ipad_for_education__rvh8drp6mfma_large_2x.jpeg"
+      <img *ngIf="product.productImagen"
+        [src]="product.productImagen"
+        class="img-detail pt-4"
+      />
+      <img *ngIf="!product.productImagen"
+        src="assets/data/img/default.png"
         class="img-detail pt-4"
       />
     </div>
@@ -45,7 +48,7 @@
             <div class="col-sm-3">
               <button
                 class="btn btn-warning"
-                (click)="showValue(product.id!, 1)"
+                (click)="addCart(product.id!)"
               >
                 Add Cart
               </button>
@@ -59,7 +62,7 @@
           <span class="fs-4 fw-bold"
             >S/ {{ product.price | number : "2.2-2" }}</span
           >
-          <button mat-raised-button routerLink="/">Back</button>
+          <button mat-raised-button routerLink="/user/shop">Back</button>
         </div>
       </div>
     </form>

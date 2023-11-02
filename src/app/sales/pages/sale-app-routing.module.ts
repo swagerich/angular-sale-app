@@ -14,6 +14,7 @@ import { OrderDetailsComponent } from './admin/order-details/order-details.compo
 import { CategoriesComponent } from './admin/category/categories/categories.component';
 import { userGuard } from '../auth/guards/user.guard';
 import { adminGuard } from '../auth/guards/admin.guard';
+import { OrderDetailsUserComponent } from './users/order-details/order-details-user.component';
 
 const routes: Routes = [
   {
@@ -40,8 +41,12 @@ const routes: Routes = [
         component: DetailsProductComponent,
       },
       {
-        path: 'order-detail',
+        path: 'add-order',
         component: AddOrderDetailComponent,
+      },
+      {
+        path: 'order-details',
+        component: OrderDetailsUserComponent,
       },
     ],
   },
@@ -74,7 +79,12 @@ const routes: Routes = [
       {
         path:'categories',
         component: CategoriesComponent
-      }
+      },
+      //cmpartir componentes usuario y admin :
+      {
+        path: 'detail-product/:pId',
+        component: DetailsProductComponent,
+      },
     ],
   },
 ];
