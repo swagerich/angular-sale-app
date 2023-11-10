@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from 'src/app/environments/environment';
 
 import { ProductDto } from '../interfaces/productDto-interface';
-import { Observable, map, of } from 'rxjs';
+import { Observable, catchError, map, of, throwError } from 'rxjs';
 import { ProductDtoOfPage } from '../interfaces/productDtoOfPage-interface';
 import { ApiResponse } from '../interfaces/ApiResponse-interface';
 
@@ -132,6 +132,12 @@ export class ProductService {
           return response.data as ProductDtoOfPage;
         })
       );
+  }
+
+  public existsNameProduct(productName: string): Observable<boolean> {
+    return this.http
+      .get<ApiResponse>(`${this.endPoint}/product/exists/${productName}`)
+      .pipe(map((response) => response.data as boolean));
   }
 
   //falta HACER EL productAllPage

@@ -24,6 +24,11 @@
       <div class="card" *ngFor="let category of categories" >
         <div class="card-body" >
           <div class="card-title">{{ category.name }}</div>
+          <img *ngIf="category.showPhoto" 
+          [src]="category.showPhoto" class="avatar-lg rounded" alt="">
+          <img *ngIf="!category.showPhoto" 
+                src="assets/data/img/default.png" class="avatar-lg rounded" alt="">
+    
           <div class="card-text">{{ category.description }}</div>   
           <button (click)="deleteCategory(category.id!)" mat-icon-button color="warn">
             <mat-icon>delete</mat-icon>

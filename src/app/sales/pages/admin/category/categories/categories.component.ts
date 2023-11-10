@@ -30,6 +30,17 @@ export class CategoriesComponent implements OnInit, OnDestroy {
       .fetchAllCategory()
       .subscribe((response) => {
         this.categories = response;
+        response.forEach(r =>{
+          if(r.fileName != null && r.filePath != null){
+            this.categorieService.viewPhoto(r.id!,r.fileName).subscribe({
+              next:(array:ArrayBuffer) =>{
+                const  blod = new Blob([array],{type:'image/jpeg' || 'image/png'});
+                r.showPhoto =  URL.createObjectURL(blod);
+              }
+            });
+          }
+        });
+    
       });
   }
 

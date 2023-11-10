@@ -13,8 +13,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './add-product.component.html',
   styleUrls: ['./add-product.component.css'],
 })
-export class AddProductComponent implements OnInit,OnDestroy {
-  
+export class AddProductComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
 
   private categoryService = inject(CategoryService);
@@ -29,12 +28,12 @@ export class AddProductComponent implements OnInit,OnDestroy {
 
   public myFormProduct: FormGroup = this.fb.group({
     id: 0,
-    name: ['', [Validators.required]],
+    name: ['', [Validators.required],[this.validatorService.cantBeNameValidator((value) => this.productService.existsNameProduct(value))]],
     description: ['', [Validators.required]],
     active: [false, []],
     price: ['', [Validators.required]],
     file: ['', [Validators.required]],
-    category: ['',[Validators.required]],
+    category: ['', [Validators.required]],
   });
 
   public selectedFile: File | undefined;
@@ -51,18 +50,19 @@ export class AddProductComponent implements OnInit,OnDestroy {
 
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
-    if (file) {
-      const allowedFormats = ['image/jpeg', 'image/png'];
-      if (allowedFormats.includes(file.type)) {
+    if (this.validatorService.isImageFile(file)) {
+      if (this.validatorService.isFileSizeValid(file, 10)) {
         this.imageUrl = URL.createObjectURL(file);
         this.selectedFile = file;
       } else {
-        // Swal.fire('Opps!','File not allowed','warning');
-        console.error('No permitido');
-        this.imageUrl = undefined;
-        this.selectedFile = undefined;
+        this.validatorService.validateSnackBar(
+          'File size exceeds the limit (10 MB)'
+        );
       }
+    } else {
+      this.validatorService.validateSnackBar('File not allowed');
     }
+    event.target.value = '';
   }
 
   saveProduct(): void {
@@ -74,29 +74,32 @@ export class AddProductComponent implements OnInit,OnDestroy {
       .saveProductToPhoto(this.currentProduct, this.selectedFile!)
       .subscribe({
         next: (a) => {
-          
-          console.log(a)
+          console.log(a);
         },
-        error:(e:HttpErrorResponse) =>{
-            this.validatorService.showSnackBarForError(e);          }
+        error: (e: HttpErrorResponse) => {
+          this.validatorService.showSnackBarForError(e);
+        },
       });
   }
 
   loadCategories(): void {
-   this.subscription$ = this.categoryService.fetchAllCategory().subscribe({
+    this.subscription$ = this.categoryService.fetchAllCategory().subscribe({
       next: (categories) => {
         this.categories = categories;
       },
     });
   }
 
-  public isValidateField(field:string): boolean | null{
-    return this.validatorService.isValidField(this.myFormProduct,field);
+  isValidateField(field: string): boolean | null {
+    return this.validatorService.isValidField(this.myFormProduct, field);
+  }
+  
+  onFieldValitatorRequiredLength(field: string): string | null {
+    return this.validatorService.isValidFieldLength(this.myFormProduct, field);
   }
 
-
   ngOnDestroy(): void {
-    if(this.subscription$){
+    if (this.subscription$) {
       this.subscription$.unsubscribe();
     }
   }

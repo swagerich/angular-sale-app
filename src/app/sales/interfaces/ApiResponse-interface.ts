@@ -29,4 +29,5 @@ export interface ApiResponse {
     | OrderDetailPageOfUserDto
     | OrderStatusDto //orderStatus
     | OrderDetailDto
+    | boolean
 }

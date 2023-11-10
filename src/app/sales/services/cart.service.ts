@@ -37,4 +37,11 @@ export class CartService {
     return this.http.put<ApiResponse>(`${this.endPoint}/cart/update/${cartId}/${quantity}`,{})
     .pipe(map((response) => response.data as QuantityProductsDto));
   }
+  
+  public clearCart(cartId:number): Observable<void> {
+    return this.http.delete<ApiResponse>(`${this.endPoint}/cart/delete-all/${cartId}`)
+    .pipe(map((response) => {
+      of(response);
+    }));
+  }
 }

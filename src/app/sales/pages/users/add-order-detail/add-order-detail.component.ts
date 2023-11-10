@@ -8,6 +8,9 @@ import { ProductService } from 'src/app/sales/services/product.service';
 import { OrderDetailDto } from 'src/app/sales/interfaces/orderDetailDto-interface';
 import { ValidatorService } from 'src/app/utils/service/validator.service';
 import { OrderDetailService } from 'src/app/sales/services/order-detail.service';
+import Swal from 'sweetalert2';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-order-detail',
@@ -24,6 +27,8 @@ export class AddOrderDetailComponent implements OnInit, OnDestroy {
   private orderDetailService = inject(OrderDetailService);
 
   private validatorService = inject(ValidatorService);
+
+  private router = inject(Router);
 
   private fb = inject(FormBuilder);
 
@@ -71,12 +76,22 @@ export class AddOrderDetailComponent implements OnInit, OnDestroy {
     this.myFormDetails.get('products')?.value.splice(0);
     this.myFormDetails.get('products')?.value.push(...productsToAdd);
 
-   this.subscription$ = this.orderDetailService.saveOrderDetail(this.currentOrderDetail).subscribe({
-      next: (data: OrderDetailDto) => {
-        console.log(data);
-      },
+    Swal.fire('Success', 'Order saved successfully', 'success').then((s) => {
+      if (s.isConfirmed) {
+        this.subscription$ = this.orderDetailService
+          .saveOrderDetail(this.currentOrderDetail)
+          .subscribe({
+            next: () => {
+              // FALTA IMPLEMENTAR EL PROCESO DE PAGO
+              this.cartService.clearCart(this.userId).subscribe();
+              this.router.navigate(['/user/order-details']);
+            },
+            error: (e: HttpErrorResponse) => {
+              this.validatorService.showSnackBarForError(e);
+            },
+          });
+      }
     });
-    ///AQUI FALTA CUANDO SE AGREGA EL PEDIDO QUE SE ELIMINE EL CARRITO
 
   }
 

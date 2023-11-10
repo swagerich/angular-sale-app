@@ -1,7 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable, catchError, debounce, distinctUntilChanged, map, of, switchMap, throwError, timer } from 'rxjs';
+import { CategoryService } from 'src/app/sales/services/category.service';
+import { ProductService } from 'src/app/sales/services/product.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +12,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ValidatorService {
 
   private snackBar = inject(MatSnackBar);
+
+  private productService = inject(ProductService);
+
+  private categoryService = inject(CategoryService);
 
   public isValidField = (myForm: FormGroup, field: string): boolean | null => {
     return myForm.controls[field].errors && myForm.controls[field].touched;
@@ -80,4 +87,31 @@ export class ValidatorService {
       verticalPosition: 'bottom',
     });
   }
+
+  public isImageFile(file: File): boolean {
+    const allowedExtensions = ['jpg', 'jpeg', 'png'];
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    return  allowedExtensions.includes(fileExtension!);;
+  }
+
+  public isFileSizeValid(file: File, maxSizeInMB: number): boolean {
+    return file.size / (1024 * 1024) <= maxSizeInMB;
+  } 
+
+  public cantBeNameValidator(checkExistenceFn: (value: string) => Observable<boolean>) : AsyncValidatorFn {
+    return (control: AbstractControl):
+      Observable<ValidationErrors | null> => {
+      const value: string = control.value.trim().toLowerCase();
+      return timer(1000).pipe(
+        switchMap(() => checkExistenceFn(value).pipe(
+          catchError((error: HttpErrorResponse) => of(error.status === 400)),
+          map(exists => exists ? { nameExists: true } : null)
+        )),
+        catchError(() => of(null)),
+        debounce(() => timer(1000)),
+        distinctUntilChanged()
+      );
+    };
+  }
+
 }

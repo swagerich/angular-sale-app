@@ -120,18 +120,17 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
 
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
-    if (file) {
-      const allowedFormats = ['image/jpeg', 'image/png'];
-      if (allowedFormats.includes(file.type)) {
+    if (this.validatorService.isImageFile(file)) {
+      if (this.validatorService.isFileSizeValid(file, 10)) {
         this.imageUrl = URL.createObjectURL(file);
         this.selectedFile = file;
       } else {
-        // Swal.fire('Opps!','File not allowed','warning');
-        console.error('No permitido');
-        this.imageUrl = undefined;
-        this.selectedFile = undefined;
+        this.validatorService.validateSnackBar('File size exceeds the limit (10 MB)');
       }
+    } else {
+      this.validatorService.validateSnackBar('File not allowed');
     }
+    event.target.value = '';
   }
 
   updateProduct(): void {
@@ -172,7 +171,7 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  public isValidateField(field: string): boolean | null {
+  isValidateField(field: string): boolean | null {
     return this.validatorService.isValidField(this.myFormProduct, field);
   }
 

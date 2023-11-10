@@ -1,33 +1,82 @@
 <form [formGroup]="myForm" (ngSubmit)="saveCategory()">
-    <h2 mat-dialog-title>{{data ? 'Update Category':'New Category'}}</h2>
-    <br />
-    <mat-dialog-content class="mat-typography">
-      <mat-form-field class="field" appearance="outline">
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name" />
-        <mat-error *ngIf="isValidateField('name')">
-            is required
-          </mat-error>
-      </mat-form-field>
+  <h2 mat-dialog-title>{{ data ? "Update Category" : "New Category" }}</h2>
+  <br />
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div>
+          <mat-dialog-content class="mat-typography">
+            <mat-form-field class="centered" appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" />
+              <mat-error *ngIf="isValidateField('name')">
+                <span>
+                  {{
+                    onFieldValitatorRequiredLength("name")
+                      ? "Name is required"
+                      : "Name exists"
+                  }}
+                </span>
+              </mat-error>
+            </mat-form-field>
 
-      <mat-form-field class="field" appearance="outline">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description"></textarea>
-        <mat-error *ngIf="isValidateField('description')">
-            is required
-          </mat-error>
-      </mat-form-field>
-    </mat-dialog-content>
+            <mat-form-field class="centered" appearance="outline">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description"></textarea>
+              <mat-error *ngIf="isValidateField('description')">
+                is required
+              </mat-error>
+            </mat-form-field>
+
+            <div *ngIf="droppedImage" class="mb-2 centered">
+              <img
+                class="rounded mx-auto d-block img"
+                [src]="droppedImage"
+                alt="Imagen cargada"
+              />
+            </div>
+            <div *ngIf="!droppedImage" class="mb-2 centered">
+              <img
+                class="rounded mx-auto d-block img"
+                src="assets/data/img/default.png"
+                alt="Imagen cargada"
+              />
+            </div>
+
+            <div
+              id="dropzone"
+              (dragover)="onDragOver($event, true)"
+              (dragleave)="onDragLeave($event)"
+              (drop)="onDropOrSelect($event)"
+              (click)="fileInput.click()"
+              [class.drag-over]="isDragOver"
+              class="dropzone"
+            >
+              Arrastra y suelta una imagen aquí o haz clic para seleccionarla.
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onDropOrSelect($event)"
+                style="display: none"
+                #fileInput
+              />
+            </div>
+          </mat-dialog-content>
+        </div>
+      </div>
+    </div>
     <mat-dialog-actions align="center">
       <button mat-raised-button color="warn" [mat-dialog-close]="false">
         Cancel
       </button>
       <button
+        [disabled]="!this.data && this.myForm.invalid"
         mat-raised-button
         type="submit"
         color="primary"
       >
-        {{data ? 'Update':'Save'}}
+        {{ data ? "Update" : "Save" }}
       </button>
     </mat-dialog-actions>
-  </form>
+  </div>
+</form>
