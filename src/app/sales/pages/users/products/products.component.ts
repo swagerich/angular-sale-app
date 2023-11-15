@@ -8,11 +8,13 @@ import {
   catchError,
   delay,
   filter,
+  forkJoin,
   from,
   map,
   mergeMap,
   of,
   switchMap,
+  tap,
   toArray,
 } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
@@ -35,22 +37,28 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   public subscription$ = new Subscription();
 
+  public selectedNameCategory: string = '';
+
+  public isLoading: boolean = false;
+
   public categories: CategoryDto[] = [];
   public products: ProductDto[] = [];
-  public pageSize = 9;
+  public pageSize = 5;
   public pageIndex = 0;
   public totalElements = 0;
-
+  categoryPageIndices: { [key: string]: number } = {};
   ngOnInit(): void {
     this.loadCategories();
     this.loadProducts();
   }
 
   loadProducts(): void {
+    this.isLoading = true;
+    this.selectedNameCategory = '';
     this.subscription$ = this.productService
       .fetchAllPageProductActive(this.pageIndex, this.pageSize)
       .pipe(
-        delay(1),
+        delay(1000),
         switchMap((response) => {
           this.totalElements = response.pages.totalElements;
           this.products = response.products;
@@ -67,37 +75,89 @@ export class ProductsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next: () => {},
+        next: () => {
+          this.isLoading = false;
+        },
       });
   }
 
-  onPageChange(event: PageEvent) {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
-    this.loadProducts();
-  }
+  // loadCategoriess(): void {
+  //   this.subscription$ = this.categoryService.fetchAllCategory().subscribe({
+  //     next: (response: CategoryDto[]) => {
+  //       const totalCategoryShow = 6;
+  //       let categorysDto = response
+  //         .filter((c) => c.id! <= totalCategoryShow)
+  //         .map((c) => {
+  //           if (c.fileName !== null && c.filePath !== null) {
+  //             this.subscription$ = this.categoryService
+  //               .viewPhoto(c.id!, c.fileName)
+  //               .subscribe({
+  //                 next: (array: ArrayBuffer) => {
+  //                   const blod = new Blob([array], {
+  //                     type: 'image/jpeg' || 'image/png',
+  //                   });
+  //                   c.showPhoto = URL.createObjectURL(blod);
+  //                 },
+  //               });
+  //           }
+  //           return c;
+  //         });
+  //       this.categories = categorysDto;
+  //     },
+  //   });
+  // }
 
   loadCategories(): void {
-    this.subscription$ = this.categoryService.fetchAllCategory().subscribe({
-      next: (response) => {
-        this.categories = response;
-      },
-    });
+    const totalCategoryShow = 6;
+    this.subscription$ = this.categoryService
+      .fetchAllCategory()
+      .pipe(
+        switchMap((response: CategoryDto[]) => {
+          let categorysDtoObserver = response
+            .filter((c) => c.id! <= totalCategoryShow)
+            .map((c) => {
+              if (c.fileName !== null && c.filePath !== null) {
+                return this.categoryService.viewPhoto(c.id!, c.fileName).pipe(
+                  map((array: ArrayBuffer) => {
+                    const blod = new Blob([array], {
+                      type: 'image/jpeg' || 'image/png',
+                    });
+                    c.showPhoto = URL.createObjectURL(blod);
+                    return c;
+                  }),
+                  catchError((e: HttpErrorResponse) => {
+                    this.validatorService.showSnackBarForError(e);
+                    return of(c);
+                  })
+                );
+              } else {
+                return of(c);
+              }
+            });
+          return forkJoin(categorysDtoObserver);
+        })
+      )
+      .subscribe({
+        next: (categories: CategoryDto[]) => {
+          this.categories = categories;
+        },
+      });
   }
 
   loadProductsByCategoryName(categoryName: string): void {
+    this.isLoading = true;
+    this.selectedNameCategory = categoryName;
     this.subscription$ = this.productService
       .fetchAllPageProductActiveByCategoryName(
-        categoryName,
+        this.selectedNameCategory,
         this.pageIndex,
         this.pageSize
       )
       .pipe(
-        delay(1),
+        delay(1000),
         switchMap((response) => {
           this.totalElements = response.pages.totalElements;
           this.products = response.products;
-          this.pageIndex = 0;
           return from(response.products).pipe(
             mergeMap((p) => {
               if (!p.namePhoto && !p.filePath) {
@@ -110,7 +170,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
           );
         })
       )
-      .subscribe(() => {});
+      .subscribe(() => {
+        this.isLoading = false;
+      });
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    if (this.selectedNameCategory) {
+      this.loadProductsByCategoryName(this.selectedNameCategory);
+    } else {
+      this.loadProducts();
+    }
   }
 
   private loadProductImage(product: ProductDto): Observable<ProductDto> {

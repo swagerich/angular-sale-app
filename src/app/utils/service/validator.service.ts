@@ -1,11 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, catchError, debounce, distinctUntilChanged, map, of, switchMap, throwError, timer } from 'rxjs';
-import { CategoryService } from 'src/app/sales/services/category.service';
-import { ProductService } from 'src/app/sales/services/product.service';
-
+import { Observable, catchError, debounce, distinctUntilChanged, map, of, switchMap, timer } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,22 +10,18 @@ export class ValidatorService {
 
   private snackBar = inject(MatSnackBar);
 
-  private productService = inject(ProductService);
-
-  private categoryService = inject(CategoryService);
-
   public isValidField = (myForm: FormGroup, field: string): boolean | null => {
     return myForm.controls[field].errors && myForm.controls[field].touched;
   };
 
-  /* MOSTRAR SNACKBAR MATERIAL  */
-  validateSnackBar(error: string): void {
+  
+  public validateSnackBar(error: string): void {
     this.snackBar.open(error, 'done', {
       duration: 3000,
     });
   }
 
-  /* VALIDAR LONGITUD */
+ 
   public isValidFieldLength = (
     myForm: FormGroup,
     field: string

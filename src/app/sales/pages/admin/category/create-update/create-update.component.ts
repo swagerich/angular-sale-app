@@ -1,18 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
-  inject,
   Inject,
   OnInit,
-  OnChanges,
-  ElementRef,
   ChangeDetectorRef,
-  OnDestroy,
-  AfterViewInit,
 } from '@angular/core';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
@@ -60,9 +54,6 @@ export class CreateUpdateComponent implements OnInit {
 
   get currentCategory(): CategoryDto {
     return this.myForm.value as CategoryDto;
-  }
-  onFieldValitatorRequiredLength(field: string): string | null {
-    return this.validatorService.isValidFieldLength(this.myForm, field);
   }
 
   async saveCategory(): Promise<void> {
@@ -156,6 +147,10 @@ export class CreateUpdateComponent implements OnInit {
     );
     this.cdr.detectChanges();
     this.imageChanged = true;
+  }
+
+  onFieldValitatorRequiredLength(field: string): string | null {
+    return this.validatorService.isValidFieldLength(this.myForm, field);
   }
 
   isValidateField(field: string): boolean | null {

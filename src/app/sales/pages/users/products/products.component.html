@@ -18,25 +18,42 @@
 <div
   class="container-fluid container overflow-hidden text-center d-flex justify-content-center aling-items-center pb-5 mt-2 mb-2 filter"
 >
-  <div *ngFor="let category of categories" (click)="loadProductsByCategoryName(category.name)"
+  <div
+    *ngFor="let category of categories"
+    (click)="loadProductsByCategoryName(category.name)"
     class="col-md-2 col-sm-5 rounded d-flex flex-column justify-content-center align-items-center"
     id="btn-airpods"
   >
+    <img *ngIf="category.showPhoto" [src]="category.showPhoto" class="p-3" />
     <img
-      src="../../../../../assets/data/img/cards/card-airpods.png"
+      *ngIf="!category.showPhoto"
+      src="assets/data/img/default.png"
       class="p-3"
     />
-    <span class="fw-bold filter-link" >{{ category.name }}</span>
+    <mat-chip-listbox aria-label="Fish selection" class="fw-bold filter-link">
+      <mat-chip-option [selected]="category.name === selectedNameCategory">{{
+        category.name
+      }}</mat-chip-option>
+    </mat-chip-listbox>
   </div>
-  
+  <mat-chip-listbox (click)="loadProducts()">
+    <mat-chip-option [selected]="selectedNameCategory == ''"
+      >All</mat-chip-option
+    >
+  </mat-chip-listbox>
 </div>
-<!-- mostrar card  By paginacion -->
-<div
-  class="overflow-hidden m-3 text-center rounded shadow-lg p-4 gap-4 flex-wrap align-items-center m-auto items-container container"
-  id="shop-items-container"
->
-  <component-card *ngFor="let product of products" [product]="product">
-  </component-card>
+<div *ngIf="isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+<div *ngIf="!isLoading">
+  <!-- mostrar card  By paginacion -->
+  <div
+    class="overflow-hidden m-3 text-center rounded shadow-lg p-4 gap-4 flex-wrap align-items-center m-auto items-container container"
+    id="shop-items-container"
+  >
+    <component-card *ngFor="let product of products" [product]="product">
+    </component-card>
+  </div>
 </div>
 <div
   class="container container-fluid d-flex justify-content-center align-items-center flex-column end-buy-container"
@@ -50,7 +67,6 @@
   ></mat-paginator>
 </div>
 
-
 <!-- Mapa -->
 
 <div class="bg-dark text-white container-fluid find-us">
@@ -60,7 +76,13 @@
   </p>
   <div class="overflow-hidden m-3 rounded shadow-lg find-us-map">
     <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3406.201436119038!2d-64.21718838489022!3d-31.381008801681563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x943298e16c8d3053%3A0x7fc78b1f816ef745!2sOneClick%20C%C3%B3rdoba%20Shopping!5e0!3m2!1sen!2sar!4v1664995580878!5m2!1sen!2sar"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.6309280240503!2d-77.01916156210086!3d-12.068895313395783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c899222dfeb3%3A0xa7071e06d6561b96!2sAv.%20Parinacochas%2C%20La%20Victoria!5e0!3m2!1ses!2spe!4v1700069643176!5m2!1ses!2spe"
+      width="600"
+      height="450"
+      style="border: 0"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
     ></iframe>
   </div>
 </div>

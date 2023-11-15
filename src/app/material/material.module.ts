@@ -14,7 +14,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
@@ -38,6 +38,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatNativeDateModule,
     MatSlideToggleModule,
     MatDialogModule,
+    MatProgressBarModule
   ],
 })
 export class MaterialModule {}
